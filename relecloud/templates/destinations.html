@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+ReleCloud - Destinos Espaciales
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>🌌 Destinos Espaciales</h1>
+        <p>Explora los rincones más fascinantes del universo</p>
+        <a href="{% url 'destination_create' %}" class="btn btn-primary">
+            ➕ Añadir Nuevo Destino
+        </a>
+    </div>
+    
+    <!-- Contador de destinos -->
+    <div style="text-align: center; margin: 2rem 0;">
+        <div style="background: rgba(26, 26, 46, 0.8); padding: 1rem; border-radius: 20px; display: inline-block; border: 2px solid var(--plasma-cyan);">
+            <h3 style="color: var(--plasma-cyan); margin: 0;">
+                🚀 {{ destinations|length }} Destino{{ destinations|length|pluralize }}{{ destinations|length|pluralize:" disponible,s disponibles" }}
+            </h3>
+        </div>
+    </div>
+    
+    <!-- Lista de destinos -->
+    {% if destinations %}
+        <div class="destinations-grid">
+            {% for destination in destinations %}
+                <div class="destination-card animate-slide-up">
+                    
+                    
+                    <!-- Información del destino -->
+                    <h3 style="text-align: center; margin-bottom: 1rem;">
+                        🪐 {{ destination.name }}
+                    </h3>
+                    
+                    <p style="text-align: center; margin-bottom: 1.5rem; opacity: 0.9;">
+                        {{ destination.description|truncatewords:25 }}
+                    </p>
+                    
+                    <!-- Información adicional -->
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 0.8rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--plasma-cyan);">
+                        <small style="color: var(--plasma-cyan);">
+                            <strong>🔗 Slug:</strong> {{ destination.slug }}
+                        </small>
+                    </div>
+                    
+                    <!-- Botones de acción -->
+                    <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="{% url 'destination_detail' destination.pk %}" class="btn btn-primary" style="flex: 1; min-width: 120px;">
+                            👁️ Ver Detalle
+                        </a>
+                        <a href="{% url 'destination_update' destination.pk %}" class="btn btn-secondary" style="flex: 1; min-width: 100px;">
+                            ✏️ Editar
+                        </a>
+                        <a href="{% url 'destination_delete' destination.pk %}" 
+                           class="btn" 
+                           style="background: linear-gradient(45deg, var(--danger-red), #cc0033); color: white; min-width: 100px;"
+                           onclick="return confirm('¿Estás seguro de que quieres eliminar {{ destination.name }}?')">
+                            🗑️ Eliminar
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- Estado vacío -->
+        <div class="destination-card animate-slide-up" style="text-align: center; max-width: 600px; margin: 2rem auto;">
+            <img src="{% static 'res/astronaut-helmet.svg' %}" 
+                 alt="Sin destinos" 
+                 style="width: 120px; height: 120px; opacity: 0.5; margin-bottom: 2rem;">
+            
+            <h2 style="color: var(--meteor-silver); margin-bottom: 1rem;">
+                🌠 Aún no hay destinos registrados
+            </h2>
+            
+            <p style="opacity: 0.8; margin-bottom: 2rem;">
+                El universo está esperando a ser explorado. ¡Añade tu primer destino espacial!
+            </p>
+            
+            <a href="{% url 'destination_create' %}" class="btn btn-primary">
+                🚀 Crear Primer Destino
+            </a>
+        </div>
+    {% endif %}
+    
+    <!-- Navegación adicional -->
+    <div style="text-align: center; margin: 3rem 0;">
+        <a href="{% url 'index' %}" class="btn btn-secondary">
+            🏠 Volver al Inicio
+        </a>
+    </div>
+</div>
+{% endblock content %}
+

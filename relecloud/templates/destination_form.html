@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+{% block title %}
+{% if destination %}
+    ReleCloud - Editar {{ destination.name }}
+{% else %}
+    ReleCloud - Nuevo Destino
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero" style="padding: 2rem 0;">
+        {% if destination %}
+            <h1>🌌 Editar Destino Espacial</h1>
+            <p>Modifica los detalles de {{ destination.name }}</p>
+        {% else %}
+            <h1>🚀 Nuevo Destino Espacial</h1>
+            <p>Añade un nuevo destino al catálogo galáctico</p>
+        {% endif %}
+    </div>
+    
+    <div class="destination-card animate-slide-up">
+        <form method="post" class="space-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_name" class="form-label" onclick="document.getElementById('id_name').focus();">
+                    🪐 Nombre del Destino
+                </label>
+                <input type="text" 
+                       name="name" 
+                       id="id_name" 
+                       value="{{ form.name.value|default:'' }}" 
+                       class="form-control" 
+                       maxlength="50" 
+                       required
+                       placeholder="Ej: Marte, Luna, Europa..."
+                       autocomplete="off"
+                       spellcheck="false">
+                {% if form.name.errors %}
+                    <div class="alert alert-danger">{{ form.name.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_description" class="form-label" onclick="document.getElementById('id_description').focus();">
+                    📝 Descripción
+                </label>
+                <textarea name="description" 
+                          id="id_description" 
+                          class="form-control" 
+                          rows="4" 
+                          maxlength="2000" 
+                          required
+                          placeholder="Describe las características únicas de este destino espacial..."
+                          spellcheck="true">{{ form.description.value|default:'' }}</textarea>
+                {% if form.description.errors %}
+                    <div class="alert alert-danger">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_slug" class="form-label" onclick="document.getElementById('id_slug').focus();">
+                    🔗 Slug (URL amigable)
+                </label>
+                <input type="text" 
+                       name="slug" 
+                       id="id_slug" 
+                       value="{{ form.slug.value|default:'' }}" 
+                       class="form-control" 
+                       maxlength="50" 
+                       required
+                       placeholder="url-amigable-del-destino"
+                       autocomplete="off"
+                       spellcheck="false"
+                       pattern="[a-z0-9-]+">
+                <small class="form-text text-muted">Solo letras minúsculas, números y guiones</small>
+                {% if form.slug.errors %}
+                    <div class="alert alert-danger">{{ form.slug.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">
+                    {% if destination %}
+                        💾 Actualizar Destino
+                    {% else %}
+                        ✨ Crear Destino
+                    {% endif %}
+                </button>
+                <a href="{% url 'destinations' %}" class="btn btn-secondary">
+                    ❌ Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.destination-card {
+    position: relative !important;
+    z-index: 10 !important;
+    background: var(--dark-matter) !important;
+    padding: 2rem !important;
+    border-radius: 15px !important;
+    border: 2px solid var(--cosmic-blue) !important;
+}
+
+.destination-card .form-group {
+    margin-bottom: 1.5rem !important;
+    position: relative !important;
+    z-index: 11 !important;
+}
+
+.destination-card .form-label {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+    color: var(--plasma-cyan) !important;
+    font-weight: bold !important;
+    cursor: default !important;
+    user-select: none !important;
+    position: relative !important;
+    z-index: 12 !important;
+}
+
+.destination-card .form-control {
+    background: var(--deep-space) !important;
+    border: 2px solid var(--aurora-green) !important;
+    color: var(--text-primary) !important;
+    padding: 0.75rem !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 1rem !important;
+    line-height: 1.5 !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    z-index: 13 !important;
+    cursor: text !important;
+    outline: none !important;
+}
+
+.destination-card .form-control:hover {
+    border-color: var(--plasma-cyan) !important;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.2) !important;
+}
+
+.destination-card .form-control:focus {
+    border-color: var(--plasma-cyan) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
+    background: var(--deep-space) !important;
+    transform: none !important;
+}
+
+.destination-card .form-control:active {
+    border-color: var(--plasma-cyan) !important;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
+}
+
+.destination-card textarea {
+    font-family: inherit !important;
+    resize: vertical !important;
+    min-height: 120px !important;
+    cursor: text !important;
+}
+
+.destination-card textarea:hover,
+.destination-card textarea:focus {
+    cursor: text !important;
+}
+
+.destination-card .form-control,
+.destination-card .form-control:hover,
+.destination-card .form-control:focus,
+.destination-card .form-control:active {
+    animation: none !important;
+    transform: none !important;
+}
+
+/* Asegurar que los labels sean clickeables */
+.destination-card .form-label:hover {
+    cursor: pointer !important;
+}
+
+/* Mejorar los botones */
+.form-actions {
+    position: relative !important;
+    z-index: 14 !important;
+    text-align: center !important;
+    margin-top: 2rem !important;
+}
+
+.form-actions .btn {
+    position: relative !important;
+    z-index: 15 !important;
+    cursor: pointer !important;
+    user-select: none !important;
+}
+
+.form-actions .btn:hover {
+    cursor: pointer !important;
+    transform: translateY(-2px) !important;
+}
+
+.destination-card * {
+    pointer-events: auto !important;
+}
+
+.space-form {
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+.destination-card .form-control::placeholder {
+    color: var(--text-secondary) !important;
+    opacity: 0.7 !important;
+}
+
+.destination-card .form-text {
+    color: var(--text-secondary) !important;
+    font-size: 0.875rem !important;
+    margin-top: 0.25rem !important;
+}
+
+.destination-card .form-control::selection {
+    background: var(--plasma-cyan) !important;
+    color: var(--dark-matter) !important;
+}
+
+.destination-card .form-control::-moz-selection {
+    background: var(--plasma-cyan) !important;
+    color: var(--dark-matter) !important;
+}
+
+.destination-card .form-control {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+}
+
+.destination-card .form-control {
+    font-size: 16px !important;
+}
+
+@media (max-width: 768px) {
+    .destination-card .form-control {
+        font-size: 16px !important;
+        padding: 1rem !important;
+    }
+}
+
+
+.alert-danger {
+    background: rgba(255, 67, 54, 0.1) !important;
+    border: 1px solid var(--solar-orange) !important;
+    color: var(--solar-orange) !important;
+    padding: 0.5rem !important;
+    border-radius: 4px !important;
+    margin-top: 0.5rem !important;
+}
+</style>
+
+{% endblock content %}

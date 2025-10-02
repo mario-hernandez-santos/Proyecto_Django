@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    ReleCloud - Expande tus horizontes
+{% endblock title %}
+
+{% block content %}
+<div class="about-hero">
+    <div class="container">
+        <div class="hero-content-about">
+            <div class="about-header">
+                <img src="{% static 'img/rocket-icon.svg' %}" class="about-logo" alt="ReleCloud">
+                <h1>Sobre ReleCloud</h1>
+                <p class="about-subtitle">🚀 Tu Pasaporte al Universo</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="about-content">
+    <div class="container">
+        <!-- Misión y Visión -->
+        <div class="mission-vision">
+            <div class="mission-card">
+                <div class="card-icon">
+                    <img src="{% static 'img/spaceship-icon.svg' %}" alt="Misión">
+                </div>
+                <h2>🎯 Nuestra Misión</h2>
+                <p>Democratizar el acceso al espacio y hacer que los viajes interplanetarios sean una realidad para todos. Creemos que el futuro de la humanidad está en las estrellas.</p>
+            </div>
+            
+            <div class="vision-card">
+                <div class="card-icon">
+                    <img src="{% static 'img/galaxy-icon.svg' %}" alt="Visión">
+                </div>
+                <h2>🌌 Nuestra Visión</h2>
+                <p>Ser la empresa líder en turismo espacial, conectando a las personas con el cosmos y inspirando a las próximas generaciones de exploradores espaciales.</p>
+            </div>
+        </div>
+
+        <!-- Historia de la empresa -->
+        <div class="company-story">
+            <h2>📖 Nuestra Historia</h2>
+            <div class="story-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="{% static 'img/star-icon.svg' %}" alt="2020">
+                    </div>
+                    <div class="timeline-content">
+                        <h3>2020 - El Nacimiento</h3>
+                        <p>ReleCloud nace como un sueño de hacer accesible el espacio para todos. Comenzamos con un pequeño equipo de visionarios.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="{% static 'img/planet-icon.svg' %}" alt="2022">
+                    </div>
+                    <div class="timeline-content">
+                        <h3>2022 - Primeros Vuelos</h3>
+                        <p>Lanzamos nuestros primeros vuelos suborbitales, llevando a civiles al borde del espacio por primera vez.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="{% static 'img/astronaut-helmet.svg' %}" alt="2024">
+                    </div>
+                    <div class="timeline-content">
+                        <h3>2024 - Turismo Lunar</h3>
+                        <p>Expandimos nuestros servicios para incluir tours alrededor de la Luna y estadías en estaciones espaciales.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <img src="{% static 'img/rocket-icon.svg' %}" alt="2025">
+                    </div>
+                    <div class="timeline-content">
+                        <h3>2025 - El Futuro</h3>
+                        <p>Hoy ofrecemos destinos a Marte, Naboo y más allá. El universo es nuestro límite.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipo -->
+        <div class="our-team">
+            <h2>👨‍🚀 Nuestro Equipo</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <img src="{% static 'img/astronaut-helmet.svg' %}" alt="CEO">
+                    </div>
+                    <h3>Dr. Elena Cosmos</h3>
+                    <p class="role">CEO & Fundadora</p>
+                    <p>Ex-astronauta de la NASA con 15 años de experiencia en misiones espaciales.</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <img src="{% static 'img/spaceship-icon.svg' %}" alt="CTO">
+                    </div>
+                    <h3>Ing. Marcus Stellar</h3>
+                    <p class="role">CTO</p>
+                    <p>Ingeniero aeroespacial especializado en propulsión de cohetes avanzada.</p>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <img src="{% static 'img/galaxy-icon.svg' %}" alt="Seguridad">
+                    </div>
+                    <h3>Dra. Sarah Orbit</h3>
+                    <p class="role">Directora de Seguridad</p>
+                    <p>Especialista en seguridad espacial con certificaciones internacionales.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tecnología -->
+        <div class="our-technology">
+            <h2>🔬 Nuestra Tecnología</h2>
+            <div class="tech-features">
+                <div class="tech-feature">
+                    <img src="{% static 'img/rocket-icon.svg' %}" alt="Cohetes">
+                    <h3>Cohetes Reutilizables</h3>
+                    <p>Flota de cohetes completamente reutilizables para viajes sostenibles al espacio.</p>
+                </div>
+                
+                <div class="tech-feature">
+                    <img src="{% static 'img/spaceship-icon.svg' %}" alt="Naves">
+                    <h3>Naves de Última Generación</h3>
+                    <p>Cápsulas espaciales con la tecnología más avanzada en seguridad y confort.</p>
+                </div>
+                
+                <div class="tech-feature">
+                    <img src="{% static 'img/star-icon.svg' %}" alt="IA">
+                    <h3>Inteligencia Artificial</h3>
+                    <p>Sistemas de IA que garantizan la máxima seguridad en cada misión.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desarrollo del proyecto -->
+        <div class="project-info">
+            <h2>💻 Desarrollo del Proyecto</h2>
+            <div class="dev-info">
+                <p>Este proyecto ha sido desarrollado como parte del proceso de aprendizaje del framework <strong>Django</strong>, permitiendo adquirir experiencia práctica en el desarrollo web moderno.</p>
+                
+                <div class="tech-stack">
+                    <h3>🛠️ Stack Tecnológico:</h3>
+                    <ul>
+                        <li><strong>Backend:</strong> Django 5.2.6 + Python</li>
+                        <li><strong>Frontend:</strong> HTML5, CSS3 + Animaciones</li>
+                        <li><strong>Base de datos:</strong> SQLite</li>
+                        <li><strong>Diseño:</strong> Tema espacial personalizado</li>
+                        <li><strong>Iconografía:</strong> SVG animados personalizados</li>
+                    </ul>
+                </div>
+                
+                <p>En ReleCloud, los usuarios pueden descubrir información sobre viajes espaciales, misiones históricas y futuras, así como recursos educativos para entender mejor el universo y la tecnología detrás de la exploración espacial.</p>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="about-cta">
+            <h2>🌟 ¿Listo para tu Aventura Espacial?</h2>
+            <p>Únete a miles de exploradores que ya han confiado en nosotros para su viaje al cosmos.</p>
+            <div class="cta-buttons">
+                <a href="{% url 'destinations' %}" class="btn btn-primary">Ver Destinos</a>
+                <a href="{% url 'info_request' %}" class="btn btn-secondary">Solicitar Información</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+

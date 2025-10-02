@@ -1,0 +1,58 @@
+from audioop import reverse
+from django.db import models
+
+# Create your models here.
+class Destination(models.Model):
+    name = models.CharField(
+        unique=True,
+        null=False,
+        blank=False,
+        max_length=50
+    )
+    description = models.TextField(
+        null=True,
+        blank=False,
+        max_length=2000
+    )
+    slug = models.SlugField()
+    def __str__(self):
+        return self.name
+    
+    def get_absolute_url(self):
+        return reverse('destination_detail', kwargs={'pk': self.pk})
+    
+class Cruise(models.Model):
+    name = models.CharField(
+        unique=True,
+        null=False,
+        blank=False,
+        max_length=50
+    )
+    description = models.TextField(
+        null=False,
+        blank=False,
+        max_length=2000
+    )
+    destinations = models.ManyToManyField(
+        Destination,
+        related_name='destinations'
+    )
+    def __str__(self):
+        return self.name
+    
+class InfoRequest(models.Model):
+    name = models.CharField(
+        max_length=50,
+        null=False,
+        blank=False,
+    )
+    email = models.EmailField()
+    notes = models.TextField(
+        max_length=2000,
+        null=False,
+        blank=False
+    )
+    cruise = models.ForeignKey(
+        Cruise,
+        on_delete=models.PROTECT
+    )

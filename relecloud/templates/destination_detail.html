@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+ReleCloud - {{ destination.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Navegación de regreso -->
+    <div style="margin: 1rem 0;">
+        <a href="{% url 'destinations' %}" class="nav-link" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+            ← 🌌 Volver a Destinos
+        </a>
+    </div>
+    
+    <!-- Hero del destino -->
+    <div class="hero" style="background-image: url('{% static 'res/space-background.svg' %}'); background-size: cover;">
+        <h1>🪐 {{ destination.name }}</h1>
+        <p>Descubre este fascinante destino espacial</p>
+    </div>
+    
+    <!-- Información principal -->
+    <div class="destination-card animate-slide-up">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+            <div style="flex: 1;">
+                <h2 style="color: var(--plasma-cyan); margin-bottom: 1rem;">
+                    📍 Información del Destino
+                </h2>
+                <div style="background: rgba(26, 26, 46, 0.6); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--plasma-cyan);">
+                    <p style="font-size: 1.2rem; line-height: 1.8;">{{ destination.description }}</p>
+                </div>
+            </div>
+            
+            
+        </div>
+        
+        <!-- Botones de acción -->
+        <div style="display: flex; gap: 1rem; margin: 2rem 0; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'destination_update' destination.pk %}" class="btn btn-primary">
+                ✏️ Editar Destino
+            </a>
+            <a href="{% url 'destination_delete' destination.pk %}" class="btn" style="background: linear-gradient(45deg, var(--danger-red), #cc0033); color: white;">
+                🗑️ Eliminar Destino
+            </a>
+        </div>
+        
+        <!-- Información técnica -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 2rem;">
+            <div style="background: rgba(0, 212, 255, 0.1); padding: 1rem; border-radius: 10px; border: 2px solid var(--plasma-cyan);">
+                <h4 style="color: var(--plasma-cyan);">🔗 Slug</h4>
+                <p>{{ destination.slug }}</p>
+            </div>
+            <div style="background: rgba(157, 78, 221, 0.1); padding: 1rem; border-radius: 10px; border: 2px solid var(--galaxy-violet);">
+                <h4 style="color: var(--galaxy-violet);">🆔 ID</h4>
+                <p>#{{ destination.pk }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cruceros relacionados -->
+    {% if destination.cruises.all %}
+    <div class="destination-card animate-slide-up">
+        <h2 style="color: var(--plasma-cyan); margin-bottom: 1.5rem;">
+            🚀 Cruceros que visitan {{ destination.name }}
+        </h2>
+        <div class="destinations-grid">
+            {% for cruise in destination.cruises.all %}
+            <div class="destination-card" style="margin: 0;">
+                <h3 style="color: var(--galaxy-violet);">{{ cruise.name }}</h3>
+                <p>{{ cruise.description|truncatewords:15 }}</p>
+                <a href="{% url 'cruise_detail' cruise.id %}" class="btn btn-secondary mt-1">
+                    🛸 Ver Crucero
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="destination-card animate-slide-up" style="text-align: center;">
+        <img src="{% static 'img/rocket-icon.svg' %}" alt="Sin cruceros" style="width: 80px; height: 80px; opacity: 0.5;">
+        <h3 style="color: var(--meteor-silver); margin-top: 1rem;">
+            🌠 Aún no hay cruceros programados
+        </h3>
+        <p style="opacity: 0.8;">Este destino está esperando su primer viaje espacial.</p>
+    </div>
+    {% endif %}
+    
+    <!-- Navegación adicional -->
+    <div style="text-align: center; margin: 3rem 0;">
+        <a href="{% url 'destinations' %}" class="btn btn-primary">
+            🌌 Ver Todos los Destinos
+        </a>
+        <a href="{% url 'destination_create' %}" class="btn btn-secondary">
+            ➕ Añadir Nuevo Destino
+        </a>
+    </div>
+</div>
+{% endblock content %}

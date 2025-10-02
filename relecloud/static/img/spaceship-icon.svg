@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="spaceshipGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#c7d2fe;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#00d4ff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:0.8" />
+    </radialGradient>
+    <linearGradient id="thrusterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#9d4edd;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ff6b35;stop-opacity:0.6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cuerpo principal de la nave -->
+  <ellipse cx="100" cy="90" rx="60" ry="25" fill="url(#spaceshipGradient)" stroke="#00d4ff" stroke-width="2"/>
+  
+  <!-- Sección de comando -->
+  <ellipse cx="100" cy="80" rx="40" ry="15" fill="url(#spaceshipGradient)" stroke="#00d4ff" stroke-width="2"/>
+  
+  <!-- Ventanas de la nave -->
+  <ellipse cx="85" cy="75" rx="8" ry="5" fill="#1a1a2e" stroke="#00d4ff" stroke-width="1"/>
+  <ellipse cx="100" cy="75" rx="8" ry="5" fill="#1a1a2e" stroke="#00d4ff" stroke-width="1"/>
+  <ellipse cx="115" cy="75" rx="8" ry="5" fill="#1a1a2e" stroke="#00d4ff" stroke-width="1"/>
+  
+  <!-- Detalles de ventanas (luz interior) -->
+  <ellipse cx="85" cy="75" rx="5" ry="3" fill="#00d4ff" opacity="0.3"/>
+  <ellipse cx="100" cy="75" rx="5" ry="3" fill="#00d4ff" opacity="0.3"/>
+  <ellipse cx="115" cy="75" rx="5" ry="3" fill="#00d4ff" opacity="0.3"/>
+  
+  <!-- Propulsores laterales -->
+  <ellipse cx="60" cy="100" rx="8" ry="12" fill="url(#spaceshipGradient)" stroke="#00d4ff" stroke-width="1"/>
+  <ellipse cx="140" cy="100" rx="8" ry="12" fill="url(#spaceshipGradient)" stroke="#00d4ff" stroke-width="1"/>
+  
+  <!-- Llamas de propulsión -->
+  <ellipse cx="60" cy="115" rx="4" ry="8" fill="url(#thrusterGradient)">
+    <animate attributeName="ry" values="6;12;6" dur="0.3s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="140" cy="115" rx="4" ry="8" fill="url(#thrusterGradient)">
+    <animate attributeName="ry" values="8;14;8" dur="0.4s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="100" cy="120" rx="6" ry="10" fill="url(#thrusterGradient)">
+    <animate attributeName="ry" values="8;16;8" dur="0.35s" repeatCount="indefinite"/>
+  </ellipse>
+  
+  <!-- Antenas y detalles técnicos -->
+  <line x1="80" y1="65" x2="80" y2="50" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="120" y1="65" x2="120" y2="50" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="80" cy="50" r="3" fill="#ff6b35">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="120" cy="50" r="3" fill="#00ff88">
+    <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Paneles solares -->
+  <rect x="50" y="85" width="15" height="10" fill="url(#spaceshipGradient)" stroke="#00d4ff" stroke-width="1" opacity="0.8"/>
+  <rect x="135" y="85" width="15" height="10" fill="url(#spaceshipGradient)" stroke="#00d4ff" stroke-width="1" opacity="0.8"/>
+  
+  <!-- Líneas de detalle en paneles -->
+  <line x1="52" y1="87" x2="63" y2="87" stroke="#00d4ff" stroke-width="0.5"/>
+  <line x1="52" y1="90" x2="63" y2="90" stroke="#00d4ff" stroke-width="0.5"/>
+  <line x1="52" y1="93" x2="63" y2="93" stroke="#00d4ff" stroke-width="0.5"/>
+  <line x1="137" y1="87" x2="148" y2="87" stroke="#00d4ff" stroke-width="0.5"/>
+  <line x1="137" y1="90" x2="148" y2="90" stroke="#00d4ff" stroke-width="0.5"/>
+  <line x1="137" y1="93" x2="148" y2="93" stroke="#00d4ff" stroke-width="0.5"/>
+  
+  <!-- Luces de navegación -->
+  <circle cx="45" cy="90" r="2" fill="#ff0040">
+    <animate attributeName="opacity" values="0.3;1;0.3" dur="1s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="155" cy="90" r="2" fill="#00ff88">
+    <animate attributeName="opacity" values="0.5;1;0.5" dur="1.2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Campo de estrellas -->
+  <g opacity="0.4">
+    <circle cx="30" cy="40" r="1" fill="#ffffff">
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="170" cy="50" r="0.8" fill="#00d4ff">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="20" cy="150" r="1.2" fill="#9d4edd">
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="180" cy="160" r="0.6" fill="#ffffff">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

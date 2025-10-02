@@ -1,0 +1,189 @@
+{% load static %}
+
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}" />
+    <link rel="icon" href="{% static 'img/rocket-icon.svg' %}" type="image/svg+xml">
+    <title>
+        {% block title %}
+        ReleCloud - Expande tus Horizontes
+        {% endblock %}
+    </title>
+</head>
+
+<body>
+    <!-- Header espacial mejorado -->
+    <header>
+        <nav class="container">
+            <div class="header-nav">
+                <div class="header-brand">
+                    <img src="{% static 'img/rocket-icon.svg' %}" width="50" height="50" alt="ReleCloud Logo" class="logo-rocket"/>
+                    <a href="{% url 'index' %}" class="nav-brand">ReleCloud</a>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li><a href="{% url 'index' %}" class="nav-link">🏠 Inicio</a></li>
+                    <li><a href="{% url 'destinations' %}" class="nav-link">🌌 Destinos</a></li>
+                    <li><a href="{% url 'info_request' %}" class="nav-link">📧 Contacto</a></li>
+                    <li><a href="{% url 'about' %}" class="nav-link">ℹ️ Acerca de</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido principal -->
+    <main role="main">
+        <!-- Mensajes del sistema -->
+        {% if messages %}
+            <div class="container messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    <p>{{ message }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Contenido de cada página -->
+        {% block content %}
+        <!-- Contenido por defecto si no se especifica -->
+        <div class="container">
+            <div class="hero hero-default">
+                <div class="hero-content-flex">
+                    <div class="rotating-images">
+                        <img src="{% static 'img/planet-icon.svg' %}" alt="Planeta" class="space-image active"/>
+                        <img src="{% static 'img/galaxy-icon.svg' %}" alt="Galaxia" class="space-image"/>
+                        <img src="{% static 'img/spaceship-icon.svg' %}" alt="Nave" class="space-image"/>
+                        <img src="{% static 'img/star-icon.svg' %}" alt="Estrella" class="space-image"/>
+                    </div>
+                    <div class="hero-text-content">
+                        <h1>🚀 Expande tus Horizontes</h1>
+                        <p>Bienvenido a ReleCloud, donde los sueños espaciales se hacen realidad.</p>
+                        <a href="{% url 'destinations' %}" class="btn btn-primary">
+                            🌌 Explorar Destinos
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock %}
+    </main>
+
+    <!-- Footer espacial -->
+    <footer>
+        <div class="container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <img src="{% static 'img/rocket-icon.svg' %}" width="30" height="30" alt="ReleCloud"/>
+                    <div>
+                        <strong>ReleCloud</strong><br>
+                        <small>Tu Pasaporte al Universo</small>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <a href="{% url 'index' %}">Inicio</a>
+                    <a href="{% url 'destinations' %}">Destinos</a>
+                    <a href="{% url 'about' %}">Acerca de</a>
+                    <a href="{% url 'info_request' %}">Contacto</a>
+                </div>
+                
+                <div class="footer-copyright">
+                    <small>
+                        &copy; 2025 Mario H<br>
+                        Hecho con 💜 para exploradores espaciales
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Decoración del footer -->
+            <div class="footer-decoration">
+                <div class="footer-icons">
+                    <img src="{% static 'img/star-icon.svg' %}" width="20" height="20" alt="Estrella" class="footer-icon"/>
+                    <img src="{% static 'img/planet-icon.svg' %}" width="25" height="25" alt="Planeta" class="footer-icon"/>
+                    <img src="{% static 'img/galaxy-icon.svg' %}" width="30" height="30" alt="Galaxia" class="footer-icon"/>
+                    <img src="{% static 'img/spaceship-icon.svg' %}" width="28" height="28" alt="Nave" class="footer-icon"/>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <style>
+    /* Estilos específicos del template base */
+    .logo-rocket {
+        animation: logoFloat 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.4));
+    }
+    
+    @keyframes logoFloat {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-5px) rotate(2deg); }
+    }
+    
+    /* Carrusel de imágenes rotativas */
+    .rotating-images {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        margin: 0 auto;
+    }
+    
+    .space-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+        filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3));
+    }
+    
+    .space-image.active {
+        opacity: 1;
+    }
+    
+    /* Iconos del footer */
+    .footer-icon {
+        opacity: 0.6;
+        transition: all 0.3s ease;
+    }
+    
+    .footer-icon:hover {
+        opacity: 1;
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .nav-menu {
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        .rotating-images {
+            width: 150px;
+            height: 150px;
+        }
+        
+        footer > .container > div:first-child {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .footer-links {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+    }
+    </style>
+
+   
+</body>
+
+</html>

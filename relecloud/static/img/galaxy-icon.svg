@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="galaxyGradient" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="30%" style="stop-color:#00d4ff;stop-opacity:0.7" />
+      <stop offset="60%" style="stop-color:#9d4edd;stop-opacity:0.5" />
+      <stop offset="100%" style="stop-color:#1a1a2e;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="armGradient" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" style="stop-color:#9d4edd;stop-opacity:0.8" />
+      <stop offset="50%" style="stop-color:#00d4ff;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#ff6b35;stop-opacity:0.2" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Núcleo galáctico -->
+  <circle cx="100" cy="100" r="15" fill="url(#galaxyGradient)">
+    <animate attributeName="opacity" values="0.8;1;0.8" dur="4s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Brazos espirales -->
+  <g transform="translate(100,100)">
+    <path d="M 0,0 Q 20,-10 35,-5 Q 50,5 60,20 Q 65,35 55,50 Q 40,60 20,55" 
+          fill="none" stroke="url(#armGradient)" stroke-width="8" opacity="0.7" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="0;360" dur="20s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 0,0 Q -20,10 -35,5 Q -50,-5 -60,-20 Q -65,-35 -55,-50 Q -40,-60 -20,-55" 
+          fill="none" stroke="url(#armGradient)" stroke-width="8" opacity="0.7" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="0;360" dur="20s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 0,0 Q 10,20 5,35 Q -5,50 -20,60 Q -35,65 -50,55 Q -60,40 -55,20" 
+          fill="none" stroke="url(#armGradient)" stroke-width="6" opacity="0.6" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="0;360" dur="20s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 0,0 Q -10,-20 -5,-35 Q 5,-50 20,-60 Q 35,-65 50,-55 Q 60,-40 55,-20" 
+          fill="none" stroke="url(#armGradient)" stroke-width="6" opacity="0.6" stroke-linecap="round">
+      <animateTransform attributeName="transform" type="rotate" values="0;360" dur="20s" repeatCount="indefinite"/>
+    </path>
+  </g>
+  
+  <!-- Estrellas dispersas -->
+  <g opacity="0.8">
+    <circle cx="40" cy="60" r="1.5" fill="#ffffff">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="160" cy="80" r="1" fill="#00d4ff">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="30" cy="140" r="1.2" fill="#9d4edd">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="170" cy="130" r="0.8" fill="#ffffff">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="60" cy="30" r="1" fill="#ff6b35">
+      <animate attributeName="opacity" values="0.2;0.8;0.2" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="140" cy="170" r="1.3" fill="#00d4ff">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Halo exterior -->
+  <circle cx="100" cy="100" r="80" fill="none" stroke="url(#galaxyGradient)" stroke-width="1" opacity="0.3">
+    <animate attributeName="opacity" values="0.1;0.4;0.1" dur="6s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+ReleCloud - Tu Pasaporte al Universo
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <!-- Hero Section Principal -->
+    <div class="hero-main">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <img src="{% static 'img/rocket-icon.svg' %}" alt="ReleCloud Rocket" class="main-rocket">
+            </div>
+            <h1 class="hero-title">🚀 ReleCloud</h1>
+            <p class="hero-subtitle">Tu Pasaporte al Universo</p>
+            <p class="hero-description">
+                Descubre los destinos más fascinantes del cosmos. Desde la Luna hasta galaxias lejanas, 
+                ReleCloud te lleva donde ningún turista ha ido antes.
+            </p>
+            <div class="hero-buttons">
+                <a href="{% url 'destinations' %}" class="btn btn-primary btn-large">
+                    🌌 Explorar Destinos
+                </a>
+                <a href="{% url 'about' %}" class="btn btn-secondary btn-large">
+                    ℹ️ Conoce Más
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Navegación Rápida -->
+    <div class="quick-nav-section">
+        <h2 class="section-title">🎯 Navegación Rápida</h2>
+        <div class="quick-nav-grid">
+            <a href="{% url 'destinations' %}" class="nav-card">
+                <div class="nav-card-icon">🪐</div>
+                <h3>Destinos</h3>
+                <p>Explora planetas, lunas y estaciones espaciales</p>
+                <span class="nav-arrow">→</span>
+            </a>
+            
+            <a href="{% url 'destination_create' %}" class="nav-card">
+                <div class="nav-card-icon">➕</div>
+                <h3>Añadir Destino</h3>
+                <p>Crea nuevos destinos para tu catálogo</p>
+                <span class="nav-arrow">→</span>
+            </a>
+            
+            <a href="{% url 'info_request' %}" class="nav-card">
+                <div class="nav-card-icon">📧</div>
+                <h3>Solicitar Info</h3>
+                <p>Contacta con nuestros expertos espaciales</p>
+                <span class="nav-arrow">→</span>
+            </a>
+            
+            <a href="{% url 'about' %}" class="nav-card">
+                <div class="nav-card-icon">🛸</div>
+                <h3>Acerca de</h3>
+                <p>Conoce la historia de ReleCloud</p>
+                <span class="nav-arrow">→</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Sección de Estadísticas -->
+    <div class="stats-section">
+        <h2 class="section-title">📊 ReleCloud en Números</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🌍</div>
+                <div class="stat-number">8+</div>
+                <div class="stat-label">Destinos Disponibles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🚀</div>
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Aventuras Posibles</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-number">5</div>
+                <div class="stat-label">Estrellas de Calidad</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🌌</div>
+                <div class="stat-number">1</div>
+                <div class="stat-label">Universo por Explorar</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Características -->
+    <div class="features-section">
+        <h2 class="section-title">✨ Por qué elegir ReleCloud</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🛡️</div>
+                <h3>Seguridad Galáctica</h3>
+                <p>Naves espaciales con la más alta tecnología y medidas de seguridad interplanetarias.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👨‍🚀</div>
+                <h3>Guías Expertos</h3>
+                <p>Astronautas profesionales te acompañarán en cada aventura espacial.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌟</div>
+                <h3>Viajes Únicos</h3>
+                <p>Vive momentos que ningún otro servicio turístico puede ofrecerte.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <h3>Tecnología Avanzada</h3>
+                <p>Utilizamos la tecnología más avanzada para hacer realidad tus sueños espaciales.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Call to Action -->
+    <div class="cta-section">
+        <div class="cta-content">
+            <img src="{% static 'img/astronaut-helmet.svg' %}" alt="Astronaut" class="cta-image">
+            <div class="cta-text">
+                <h2>¿Listo para tu Aventura Espacial?</h2>
+                <p>Únete a miles de exploradores que ya han confiado en ReleCloud para sus viajes cósmicos.</p>
+                <div class="cta-buttons">
+                    <a href="{% url 'destinations' %}" class="btn btn-primary btn-large">
+                        🚀 Comenzar Exploración
+                    </a>
+                    <a href="{% url 'info_request' %}" class="btn btn-secondary btn-large">
+                        📞 Contactar Ahora
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Hero Section Principal */
+.hero-main {
+    background: radial-gradient(ellipse at center, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+    padding: 4rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-icon {
+    margin-bottom: 2rem;
+}
+
+.main-rocket {
+    width: 120px;
+    height: 120px;
+    animation: rocketFloat 4s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.4));
+}
+
+.hero-title {
+    font-size: 4.5rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--plasma-cyan), var(--galaxy-violet), var(--solar-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+.hero-subtitle {
+    font-size: 1.8rem;
+    color: var(--plasma-cyan);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    opacity: 0.9;
+    line-height: 1.8;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-large {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Secciones */
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: var(--plasma-cyan);
+}
+
+.quick-nav-section, .stats-section, .features-section {
+    margin: 5rem 0;
+}
+
+/* Navegación Rápida */
+.quick-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.nav-card {
+    background: rgba(26, 26, 46, 0.8);
+    border: 2px solid var(--cosmic-blue);
+    border-radius: 20px;
+    padding: 2rem;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--plasma-cyan);
+    box-shadow: 0 20px 50px rgba(0, 212, 255, 0.2);
+    color: inherit;
+    text-decoration: none;
+}
+
+.nav-card-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.nav-card h3 {
+    color: var(--plasma-cyan);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.nav-card p {
+    text-align: center;
+    opacity: 0.8;
+    margin-bottom: 1rem;
+}
+
+.nav-arrow {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: var(--plasma-cyan);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-card:hover .nav-arrow {
+    opacity: 1;
+}
+
+/* Estadísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.stat-card {
+    background: rgba(157, 78, 221, 0.1);
+    border: 2px solid var(--galaxy-violet);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: scale(1.05);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--galaxy-violet);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* Características */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.feature-card {
+    background: rgba(26, 26, 46, 0.6);
+    border: 2px solid var(--cosmic-blue);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    border-color: var(--solar-orange);
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    color: var(--solar-orange);
+    margin-bottom: 1rem;
+}
+
+/* Call to Action */
+.cta-section {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+    border-radius: 30px;
+    padding: 4rem 2rem;
+    margin: 5rem 0;
+    text-align: center;
+}
+
+.cta-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.cta-image {
+    width: 150px;
+    height: 150px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.cta-text h2 {
+    font-size: 2.5rem;
+    color: var(--plasma-cyan);
+    margin-bottom: 1rem;
+}
+
+.cta-text p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Animaciones */
+@keyframes rocketFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+@keyframes titleGlow {
+    0%, 100% { text-shadow: 0 0 30px rgba(0, 212, 255, 0.5); }
+    50% { text-shadow: 0 0 50px rgba(0, 212, 255, 0.8), 0 0 80px rgba(157, 78, 221, 0.4); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title { font-size: 3rem; }
+    .hero-subtitle { font-size: 1.4rem; }
+    .hero-description { font-size: 1rem; }
+    .cta-content { flex-direction: column; }
+    .nav-card, .stat-card, .feature-card { margin-bottom: 1rem; }
+}
+</style>
+{% endblock content %}
+

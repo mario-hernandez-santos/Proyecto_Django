@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %} 
+
+{% block title %}
+ReleCloud - Solicitar Información 
+{% endblock title %} 
+
+{% block content %}
+<div class="info-request-hero">
+  <div class="container">
+    <div class="hero-content-form">
+      <div class="form-header">
+        <img
+          src="{% static 'img/spaceship-icon.svg' %}"
+          class="form-logo"
+          alt="Contacto"
+        />
+        <h1>🚀 Solicitar Información</h1>
+        <p class="form-subtitle">
+          ¿Listo para tu aventura espacial? Completa el formulario y nos
+          pondremos en contacto contigo.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-content">
+  <div class="container">
+    <div class="form-container">
+      <div class="form-info">
+        <h3>🌟 ¿Por qué elegir ReleCloud?</h3>
+        <ul class="benefits-list">
+          <li>
+            <img src="{% static 'img/star-icon.svg' %}" alt="Seguridad" />
+            <span
+              ><strong>Máxima Seguridad:</strong> Certificaciones
+              internacionales</span
+            >
+          </li>
+          <li>
+            <img src="{% static 'img/rocket-icon.svg' %}" alt="Tecnología" />
+            <span
+              ><strong>Tecnología Avanzada:</strong> Naves de última
+              generación</span
+            >
+          </li>
+          <li>
+            <img src="{% static 'img/galaxy-icon.svg' %}" alt="Experiencia" />
+            <span
+              ><strong>Experiencia Única:</strong> Vive el espacio como
+              nunca</span
+            >
+          </li>
+          <li>
+            <img src="{% static 'img/planet-icon.svg' %}" alt="Destinos" />
+            <span
+              ><strong>Múltiples Destinos:</strong> Luna, Marte y más allá</span
+            >
+          </li>
+        </ul>
+
+        <div class="contact-info">
+          <h4>📞 Información de Contacto</h4>
+          <p><strong>Email:</strong> info@relecloud.space</p>
+          <p><strong>Teléfono:</strong> +34 123 ESP-01</p>
+          <p><strong>Horario:</strong> 24/7 (Tiempo Universal)</p>
+        </div>
+      </div>
+
+      <div class="form-wrapper">
+        <div class="form-card">
+          <h2>📝 Completa tus datos</h2>
+          <form method="post" class="space-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label for="{{ form.name.id_for_label }}"
+                >👤 Nombre Completo:</label
+              >
+              {{ form.name }} {% if form.name.errors %}
+              <div class="form-errors">{{ form.name.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.email.id_for_label }}">📧 Email:</label>
+              {{ form.email }} {% if form.email.errors %}
+              <div class="form-errors">{{ form.email.errors }}</div>
+              {% endif %}
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.cruise.id_for_label }}"
+                >🚀 Crucero de Interés:</label
+              >
+              {{ form.cruise }} {% if form.cruise.errors %}
+              <div class="form-errors">{{ form.cruise.errors }}</div>
+              {% endif %}
+              <small class="form-help"
+                >Selecciona el crucero espacial que más te interese</small
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="{{ form.notes.id_for_label }}">💬 Notas:</label>
+              {{ form.notes }} {% if form.notes.errors %}
+              <div class="form-errors">{{ form.notes.errors }}</div>
+              {% endif %}
+              <small class="form-help"
+                >Cuéntanos sobre tu experiencia espacial ideal</small>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary btn-space">
+                🚀 Enviar Solicitud
+              </button>
+              <a href="{% url 'destinations' %}" class="btn btn-secondary">
+                🌌 Ver Destinos
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

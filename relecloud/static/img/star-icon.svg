@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="starGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="70%" style="stop-color:#00d4ff;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#9d4edd;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="coreGradient" cx="50%" cy="50%" r="30%">
+      <stop offset="0%" style="stop-color:#ffff00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff6b35;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#ff0040;stop-opacity:0.7" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Rayos de luz -->
+  <g opacity="0.8">
+    <line x1="100" y1="20" x2="100" y2="40" stroke="url(#starGradient)" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="100" y1="160" x2="100" y2="180" stroke="url(#starGradient)" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.7;1;0.7" dur="2.2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="20" y1="100" x2="40" y2="100" stroke="url(#starGradient)" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="1.8s" repeatCount="indefinite"/>
+    </line>
+    <line x1="160" y1="100" x2="180" y2="100" stroke="url(#starGradient)" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.4;1;0.4" dur="2.4s" repeatCount="indefinite"/>
+    </line>
+    
+    <!-- Rayos diagonales -->
+    <line x1="141" y1="59" x2="155" y2="45" stroke="url(#starGradient)" stroke-width="2" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.3;0.9;0.3" dur="1.6s" repeatCount="indefinite"/>
+    </line>
+    <line x1="59" y1="59" x2="45" y2="45" stroke="url(#starGradient)" stroke-width="2" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.5;0.9;0.5" dur="1.9s" repeatCount="indefinite"/>
+    </line>
+    <line x1="141" y1="141" x2="155" y2="155" stroke="url(#starGradient)" stroke-width="2" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2.1s" repeatCount="indefinite"/>
+    </line>
+    <line x1="59" y1="141" x2="45" y2="155" stroke="url(#starGradient)" stroke-width="2" stroke-linecap="round">
+      <animate attributeName="opacity" values="0.6;1;0.6" dur="1.7s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  
+  <!-- Núcleo de la estrella -->
+  <circle cx="100" cy="100" r="25" fill="url(#coreGradient)" stroke="#ffffff" stroke-width="2">
+    <animate attributeName="r" values="22;28;22" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Resplandor exterior -->
+  <circle cx="100" cy="100" r="35" fill="none" stroke="url(#starGradient)" stroke-width="1" opacity="0.6">
+    <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="100" cy="100" r="45" fill="none" stroke="url(#starGradient)" stroke-width="1" opacity="0.4">
+    <animate attributeName="opacity" values="0.2;0.6;0.2" dur="3.2s" repeatCount="indefinite"/>
+  </circle>
+</svg>

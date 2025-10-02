@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+ReleCloud - Eliminar {{ destination.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="hero" style="padding: 2rem 0;">
+        <h1>⚠️ Confirmación de Eliminación</h1>
+        <p>Esta acción no se puede deshacer</p>
+    </div>
+    
+    <div class="destination-card animate-slide-up" style="text-align: center; max-width: 600px; margin: 0 auto;">
+        <div style="margin-bottom: 2rem;">
+            <img src="{% static 'img/rocket-icon.svg' %}" alt="Advertencia" style="width: 80px; height: 80px; opacity: 0.7;">
+        </div>
+        
+        <h2 style="color: var(--danger-red); margin-bottom: 1rem;">
+            🗑️ ¿Eliminar {{ destination.name }}?
+        </h2>
+        
+        <div class="alert alert-danger" style="margin: 2rem 0;">
+            <strong>⚡ Advertencia:</strong> Esta acción eliminará permanentemente el destino 
+            <strong>"{{ destination.name }}"</strong> de la base de datos. 
+            No podrás recuperar esta información.
+        </div>
+        
+        <div style="background: rgba(26, 26, 46, 0.8); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
+            <h4 style="color: var(--plasma-cyan);">📋 Información del destino:</h4>
+            <p><strong>Nombre:</strong> {{ destination.name }}</p>
+            <p><strong>Descripción:</strong> {{ destination.description|truncatewords:20 }}</p>
+            <p><strong>Slug:</strong> {{ destination.slug }}</p>
+        </div>
+        
+        <form method="post" style="margin-top: 2rem;">
+            {% csrf_token %}
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <button type="submit" class="btn" style="background: linear-gradient(45deg, var(--danger-red), #cc0033); color: white; border: none;">
+                    💥 Sí, eliminar destino
+                </button>
+                <a href="{% url 'destination_detail' destination.pk %}" class="btn btn-secondary">
+                    🛡️ No, mantener destino
+                </a>
+            </div>
+        </form>
+        
+        <div style="margin-top: 2rem; padding: 1rem; background: rgba(0, 255, 136, 0.1); border-radius: 10px; border-left: 4px solid var(--success-green);">
+            <p style="color: var(--success-green); margin: 0;">
+                💡 <strong>Sugerencia:</strong> Si solo quieres ocultarlo temporalmente, 
+                considera editarlo en lugar de eliminarlo.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock content %}
