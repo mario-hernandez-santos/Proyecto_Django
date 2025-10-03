@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,6 +33,10 @@ ALLOWED_HOSTS = [
     '*'  # Temporal para debugging
 ]
 
+# Configuración CSRF para Azure (necesario para formularios)
+CSRF_TRUSTED_ORIGINS = [
+    "https://relecloudmarioh.azurewebsites.net"
+]
 
 # Application definition
 
@@ -67,9 +72,11 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.static',
             ],
         },
     },
@@ -83,8 +90,13 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'tutorialdjango@mariohernandez',
+        'PASSWORD': os.getenv('DB_PASSWORD', 'Mariohernandez-'),
+        'HOST': 'mariohernandez.postgres.database.azure.com',
+        'PORT': '5432',
+        "OPTIONS": {"sslmode": "require"},
     }
 }
 
@@ -126,13 +138,18 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Directorios donde buscar archivos estáticos
-STATICFILES_DIRS = [
-    BASE_DIR / 'relecloud' / 'static',
-]
+# # Directorios donde buscar archivos estáticos
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'relecloud' / 'static',
+# ]
 
 # Configuración simple para WhiteNoise (sin compresión por ahora)
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+
+# Configuración para mejorar rendimiento
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
 
 
 # Default primary key field type
