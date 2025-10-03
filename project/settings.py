@@ -30,13 +30,18 @@ ALLOWED_HOSTS = [
     'relecloudmarioh.azurewebsites.net',
     'localhost',
     '127.0.0.1',
-    '*'  # Temporal para debugging
+    '169.254.129.4',    # Azure internal health checks
+    '.azurewebsites.net',  # Wildcard para todos los sitios de Azure
 ]
 
 # Configuración CSRF para Azure (necesario para formularios)
 CSRF_TRUSTED_ORIGINS = [
     "https://relecloudmarioh.azurewebsites.net"
 ]
+
+# Configuración para Azure App Service
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = False  # Azure maneja SSL automáticamente
 
 # Application definition
 
@@ -92,11 +97,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
-        'USER': 'tutorialdjango@mariohernandez',
+        'USER': 'tutorialdjango',
         'PASSWORD': os.getenv('DB_PASSWORD', 'Mariohernandez-'),
         'HOST': 'mariohernandez.postgres.database.azure.com',
         'PORT': '5432',
-        "OPTIONS": {"sslmode": "require"},
+        'OPTIONS': {
+            'sslmode': 'require'
+        },
     }
 }
 
