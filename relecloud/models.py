@@ -1,5 +1,5 @@
-from audioop import reverse
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 class Destination(models.Model):
@@ -35,7 +35,7 @@ class Cruise(models.Model):
     )
     destinations = models.ManyToManyField(
         Destination,
-        related_name='destinations'
+        related_name='cruises'
     )
     def __str__(self):
         return self.name
