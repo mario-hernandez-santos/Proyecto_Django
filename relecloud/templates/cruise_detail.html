@@ -117,6 +117,64 @@ ReleCloud - {{ cruise.name }}
         </div>
     </div>
 
+    <!-- Sección de opiniones -->
+    <div class="destination-card animate-slide-up">
+        <h2 style="color: var(--plasma-cyan); margin-bottom: 1.5rem;">
+            💬 Opiniones de Viajeros
+        </h2>
+        
+        {% if user.is_authenticated %}
+        <!-- Formulario para agregar opinión -->
+        <div style="background: rgba(26, 26, 46, 0.6); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border: 2px solid var(--plasma-cyan); position: relative; z-index: 1;">
+            <h3 style="color: var(--galaxy-violet); margin-bottom: 1rem;">✍️ Comparte tu opinión</h3>
+            <form method="post" action="{% url 'cruise_comment' cruise.pk %}">
+                {% csrf_token %}
+                <textarea 
+                    name="content" 
+                    rows="4" 
+                    placeholder="Escribe tu opinión sobre este crucero..."
+                    style="width: 100%; padding: 1rem; border-radius: 8px; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--plasma-cyan); color: white; font-family: inherit; resize: vertical; position: relative; z-index: 10; cursor: text;"
+                    maxlength="1000"
+                    required
+                ></textarea>
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem; position: relative; z-index: 10;">
+                    🚀 Publicar Opinión
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <!-- Mensaje para usuarios no autenticados -->
+        <div style="background: rgba(255, 193, 7, 0.1); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border: 2px solid #ffc107; text-align: center;">
+            <p style="color: #ffc107; font-size: 1.1rem;">
+                🔒 Debes <a href="{% url 'admin:login' %}?next={{ request.path }}" style="color: var(--plasma-cyan); text-decoration: underline;">iniciar sesión</a> para compartir tu opinión
+            </p>
+        </div>
+        {% endif %}
+        
+        <!-- Lista de opiniones -->
+        {% if comments %}
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for comment in comments %}
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; border-left: 4px solid var(--galaxy-violet);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <strong style="color: var(--plasma-cyan);">👤 {{ comment.user.username }}</strong>
+                    <span style="color: var(--meteor-silver); font-size: 0.9rem;">
+                        🕐 {{ comment.created_at|date:"d/m/Y H:i" }}
+                    </span>
+                </div>
+                <p style="line-height: 1.6; margin: 0;">{{ comment.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 2rem; opacity: 0.7;">
+            <p style="color: var(--meteor-silver); font-size: 1.1rem;">
+                📭 Aún no hay opiniones sobre este crucero. ¡Sé el primero en compartir tu experiencia!
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
     <!-- Botones de acción -->
     <div style="text-align: center; margin: 3rem 0;">
         <a href="{% url 'info_request' %}" 
