@@ -19,59 +19,13 @@
 
 ## 👥 Equipo de Desarrollo
 
-<table>
-<tr>
-<td align="center" width="33%">
-<img src="https://via.placeholder.com/150/4A90E2/FFFFFF?text=MH" alt="Mario Hernández" width="150" height="150" style="border-radius: 50%;">
-<br />
-<sub><b>Mario Hernández Santos</b></sub>
-<br />
-<sub>Scrum Master</sub>
-<br />
-<a href="https://github.com/mario-hernandez-santos">GitHub</a>
-</td>
-<td align="center" width="33%">
-<img src="https://via.placeholder.com/150/E74C3C/FFFFFF?text=TM" alt="Compañero 2" width="150" height="150" style="border-radius: 50%;">
-<br />
-<sub><b>Nicolás Sanchidrián Infante</b></sub>
-<br />
-<sub>Backend Developer</sub>
-<br />
-<a href="#">GitHub</a>
-</td>
-<td align="center" width="33%">
-<img src="https://via.placeholder.com/150/F39C12/FFFFFF?text=TM" alt="Compañero 3" width="150" height="150" style="border-radius: 50%;">
-<br />
-<sub><b>Jesús de Andrés de las Heras</b></sub>
-<br />
-<sub>Frontend Developer</sub>
-<br />
-<a href="#">GitHub</a>
-</td>
-</tr>
-<tr>
-<td align="center" width="33%">
-<img src="https://via.placeholder.com/150/9B59B6/FFFFFF?text=TM" alt="Compañero 4" width="150" height="150" style="border-radius: 50%;">
-<br />
-<sub><b>Alejandro de Pazos Tena</b></sub>
-<br />
-<sub>QA Engineer</sub>
-<br />
-<a href="#">GitHub</a>
-</td>
-<td align="center" width="33%">
-<img src="https://via.placeholder.com/150/1ABC9C/FFFFFF?text=TM" alt="Compañero 5" width="150" height="150" style="border-radius: 50%;">
-<br />
-<sub><b>Gonzalo de Lorenzo Vaquero</b></sub>
-<br />
-<sub>DevOps Engineer</sub>
-<br />
-<a href="#">GitHub</a>
-</td>
-<td align="center" width="33%">
-</td>
-</tr>
-</table>
+| Nombre | Rol | GitHub |
+|--------|-----|--------|
+| **Mario Hernández Santos** | Scrum Master | [GitHub](https://github.com/mario-hernandez-santos) |
+| **Nicolás Sanchidrián Infante** | Backend Developer | [GitHub](#) |
+| **Jesús de Andrés de las Heras** | Frontend Developer | [GitHub](#) |
+| **Alejandro de Pazos Tena** | QA Engineer | [GitHub](#) |
+| **Gonzalo de Lorenzo Vaquero** | DevOps Engineer | [GitHub](#) |
 
 ---
 
