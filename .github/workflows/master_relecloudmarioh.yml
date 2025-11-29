@@ -51,15 +51,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: python-app
-      
+          path: python-app
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -67,10 +68,12 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7F412BBE6D99468FA9F026C7A755208D }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_29C76D393B8B46FABD146DF5C3FCD57A }}
 
-      - name: 'Deploy to Azure Web App'
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
           app-name: 'relecloudmarioh'
           slot-name: 'Production'
+          package: python-app
+
           
