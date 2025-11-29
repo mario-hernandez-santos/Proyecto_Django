@@ -1,7 +1,13 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.exceptions import ValidationError
+from PIL import Image
+import io
+import tempfile
 from .models import Destination, Cruise, Comment
+from .forms import DestinationForm
 
 
 class CommentModelTest(TestCase):
@@ -228,3 +234,361 @@ class CommentValidationTest(TestCase):
         # así que verificamos que el max_length está definido
         content_field = Comment._meta.get_field('content')
         self.assertEqual(content_field.max_length, 1000)
+
+
+# ============================================================================
+# SUBTAREA 4: TESTS PARA IMAGEN EN DESTINATION
+# ============================================================================
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class DestinationImageModelTest(TestCase):
+    """Tests unitarios para el modelo Destination con ImageField"""
+    
+    def create_test_image(self, name='test.jpg', size=(100, 100), format='JPEG'):
+        """Helper para crear imágenes de prueba"""
+        file = io.BytesIO()
+        image = Image.new('RGB', size, color='red')
+        image.save(file, format)
+        file.seek(0)
+        return SimpleUploadedFile(name, file.read(), content_type=f'image/{format.lower()}')
+    
+    def test_destination_can_be_created_without_image(self):
+        """El campo imagen es opcional (blank=True, null=True)"""
+        destination = Destination.objects.create(
+            name='Mars Without Image',
+            description='Red planet',
+            slug='mars-no-img'
+        )
+        self.assertFalse(destination.image)
+        self.assertEqual(destination.name, 'Mars Without Image')
+    
+    def test_destination_can_be_created_with_image(self):
+        """Se puede crear un destino con imagen"""
+        image = self.create_test_image()
+        destination = Destination.objects.create(
+            name='Mars With Image',
+            description='Red planet',
+            slug='mars-img',
+            image=image
+        )
+        self.assertTrue(destination.image)
+        self.assertIn('destinations/', destination.image.name)
+    
+    def test_image_upload_path_uses_uuid(self):
+        """El nombre del archivo usa UUID para evitar colisiones"""
+        image = self.create_test_image(name='original.jpg')
+        destination = Destination.objects.create(
+            name='Test UUID',
+            description='Test',
+            slug='test-uuid',
+            image=image
+        )
+        # El nombre no debe ser 'original.jpg', debe ser UUID
+        self.assertNotIn('original', destination.image.name)
+        self.assertIn('destinations/', destination.image.name)
+        self.assertTrue(destination.image.name.endswith('.jpg'))
+    
+    def test_image_field_validators(self):
+        """El campo imagen tiene validadores de extensión"""
+        image_field = Destination._meta.get_field('image')
+        validators = image_field.validators
+        self.assertTrue(len(validators) > 0)
+        # Verificar que existe FileExtensionValidator
+        from django.core.validators import FileExtensionValidator
+        has_extension_validator = any(
+            isinstance(v, FileExtensionValidator) for v in validators
+        )
+        self.assertTrue(has_extension_validator)
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class DestinationImageFormTest(TestCase):
+    """Tests unitarios para DestinationForm con validaciones de imagen"""
+    
+    def create_test_image(self, name='test.jpg', size=(100, 100), format='JPEG'):
+        """Helper para crear imágenes de prueba"""
+        file = io.BytesIO()
+        image = Image.new('RGB', size, color='blue')
+        image.save(file, format)
+        file.seek(0)
+        return SimpleUploadedFile(name, file.read(), content_type=f'image/{format.lower()}')
+    
+    def test_form_accepts_valid_jpg_image(self):
+        """El formulario acepta imágenes JPG válidas"""
+        image = self.create_test_image('test.jpg', format='JPEG')
+        form = DestinationForm(
+            data={'name': 'Test', 'description': 'Desc', 'slug': 'test'},
+            files={'image': image}
+        )
+        self.assertTrue(form.is_valid())
+    
+    def test_form_accepts_valid_png_image(self):
+        """El formulario acepta imágenes PNG válidas"""
+        image = self.create_test_image('test.png', format='PNG')
+        form = DestinationForm(
+            data={'name': 'Test PNG', 'description': 'Desc', 'slug': 'test-png'},
+            files={'image': image}
+        )
+        self.assertTrue(form.is_valid())
+    
+    def test_form_accepts_valid_webp_image(self):
+        """El formulario acepta imágenes WEBP válidas"""
+        image = self.create_test_image('test.webp', format='WEBP')
+        form = DestinationForm(
+            data={'name': 'Test WEBP', 'description': 'Desc', 'slug': 'test-webp'},
+            files={'image': image}
+        )
+        self.assertTrue(form.is_valid())
+    
+    def test_form_rejects_oversized_image(self):
+        """El formulario rechaza imágenes mayores a 5MB"""
+        # Crear una imagen grande (más de 5MB)
+        large_image = self.create_test_image('large.jpg', size=(5000, 5000))
+        form = DestinationForm(
+            data={'name': 'Large', 'description': 'Desc', 'slug': 'large'},
+            files={'image': large_image}
+        )
+        # Verificar que el formulario no es válido
+        if not form.is_valid():
+            self.assertIn('image', form.errors)
+            self.assertIn('5MB', str(form.errors['image']))
+    
+    def test_form_rejects_invalid_mime_type(self):
+        """El formulario rechaza tipos MIME no permitidos"""
+        # Crear un archivo falso con extensión válida pero MIME incorrecto
+        fake_image = SimpleUploadedFile(
+            'fake.jpg',
+            b'not an image',
+            content_type='text/plain'
+        )
+        form = DestinationForm(
+            data={'name': 'Fake', 'description': 'Desc', 'slug': 'fake'},
+            files={'image': fake_image}
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn('image', form.errors)
+    
+    def test_form_rejects_invalid_extension(self):
+        """El formulario rechaza extensiones no permitidas (.gif, .bmp, etc.)"""
+        gif_image = SimpleUploadedFile(
+            'test.gif',
+            b'GIF89a',
+            content_type='image/gif'
+        )
+        form = DestinationForm(
+            data={'name': 'GIF Test', 'description': 'Desc', 'slug': 'gif'},
+            files={'image': gif_image}
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn('image', form.errors)
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class DestinationImageIntegrationTest(TestCase):
+    """Tests de integración para subida y visualización de imágenes"""
+    
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='admin',
+            password='admin123',
+            is_staff=True,
+            is_superuser=True
+        )
+    
+    def create_test_image(self, name='test.jpg', size=(200, 200)):
+        """Helper para crear imágenes de prueba"""
+        file = io.BytesIO()
+        image = Image.new('RGB', size, color='green')
+        image.save(file, 'JPEG')
+        file.seek(0)
+        return SimpleUploadedFile(name, file.read(), content_type='image/jpeg')
+    
+    def test_create_destination_with_image_via_view(self):
+        """Se puede crear un destino con imagen a través de la vista"""
+        self.client.login(username='admin', password='admin123')
+        image = self.create_test_image()
+        
+        response = self.client.post(reverse('destination_create'), {
+            'name': 'Venus',
+            'description': 'Hot planet',
+            'slug': 'venus',
+            'image': image
+        })
+        
+        # Verificar redirección exitosa
+        self.assertEqual(response.status_code, 302)
+        
+        # Verificar que el destino se creó con imagen
+        destination = Destination.objects.get(slug='venus')
+        self.assertTrue(destination.image)
+        self.assertIn('destinations/', destination.image.name)
+    
+    def test_update_destination_image_via_view(self):
+        """Se puede actualizar la imagen de un destino existente"""
+        # Crear destino sin imagen
+        destination = Destination.objects.create(
+            name='Jupiter',
+            description='Gas giant',
+            slug='jupiter'
+        )
+        
+        self.client.login(username='admin', password='admin123')
+        new_image = self.create_test_image('new.jpg')
+        
+        response = self.client.post(
+            reverse('destination_update', kwargs={'pk': destination.pk}),
+            {
+                'name': 'Jupiter',
+                'description': 'Gas giant',
+                'slug': 'jupiter',
+                'image': new_image
+            }
+        )
+        
+        destination.refresh_from_db()
+        self.assertTrue(destination.image)
+    
+    def test_destination_detail_displays_image(self):
+        """La página de detalle muestra la imagen si existe"""
+        image = self.create_test_image()
+        destination = Destination.objects.create(
+            name='Saturn',
+            description='Ringed planet',
+            slug='saturn',
+            image=image
+        )
+        
+        response = self.client.get(
+            reverse('destination_detail', kwargs={'pk': destination.pk})
+        )
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, destination.image.url)
+    
+    def test_destination_detail_shows_placeholder_without_image(self):
+        """La página de detalle muestra placeholder si no hay imagen"""
+        destination = Destination.objects.create(
+            name='Neptune',
+            description='Blue planet',
+            slug='neptune'
+        )
+        
+        response = self.client.get(
+            reverse('destination_detail', kwargs={'pk': destination.pk})
+        )
+        
+        self.assertEqual(response.status_code, 200)
+        # Verificar que muestra el placeholder
+        self.assertContains(response, 'planet-icon.svg')
+    
+    def test_destination_list_displays_images(self):
+        """La lista de destinos muestra las imágenes"""
+        image = self.create_test_image()
+        destination = Destination.objects.create(
+            name='Uranus',
+            description='Ice giant',
+            slug='uranus',
+            image=image
+        )
+        
+        response = self.client.get(reverse('destinations'))
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, destination.image.url)
+
+
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+class DestinationImageSecurityTest(TestCase):
+    """Tests de seguridad para validar subida de archivos"""
+    
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='hacker',
+            password='hack123',
+            is_staff=True
+        )
+        self.client.login(username='hacker', password='hack123')
+    
+    def test_reject_executable_file_with_image_extension(self):
+        """Rechaza archivos ejecutables disfrazados como imágenes"""
+        malicious_file = SimpleUploadedFile(
+            'malware.jpg',
+            b'#!/bin/bash\nrm -rf /',
+            content_type='application/x-sh'
+        )
+        
+        response = self.client.post(reverse('destination_create'), {
+            'name': 'Malicious',
+            'description': 'Bad',
+            'slug': 'malicious',
+            'image': malicious_file
+        })
+        
+        # No debe crear el destino con archivo malicioso
+        self.assertFalse(Destination.objects.filter(slug='malicious').exists())
+    
+    def test_reject_html_file_as_image(self):
+        """Rechaza archivos HTML disfrazados como imágenes"""
+        html_file = SimpleUploadedFile(
+            'xss.jpg',
+            b'<html><script>alert("XSS")</script></html>',
+            content_type='text/html'
+        )
+        
+        form = DestinationForm(
+            data={'name': 'XSS', 'description': 'Bad', 'slug': 'xss'},
+            files={'image': html_file}
+        )
+        
+        self.assertFalse(form.is_valid())
+    
+    def test_reject_path_traversal_in_filename(self):
+        """El sistema protege contra path traversal (../)"""
+        file = io.BytesIO()
+        image = Image.new('RGB', (50, 50), color='red')
+        image.save(file, 'JPEG')
+        file.seek(0)
+        
+        traversal_file = SimpleUploadedFile(
+            '../../../evil.jpg',
+            file.read(),
+            content_type='image/jpeg'
+        )
+        
+        destination = Destination.objects.create(
+            name='Traversal Test',
+            description='Test',
+            slug='traversal',
+            image=traversal_file
+        )
+        
+        # El nombre del archivo no debe contener ../ en el path final
+        self.assertNotIn('..', destination.image.name)
+        self.assertIn('destinations/', destination.image.name)
+    
+    def test_maximum_file_size_enforced(self):
+        """Se valida el tamaño máximo de 5MB"""
+        # Crear imagen muy grande
+        file = io.BytesIO()
+        # Imagen de 6MB aproximadamente
+        huge_image = Image.new('RGB', (10000, 10000), color='white')
+        huge_image.save(file, 'JPEG', quality=95)
+        file.seek(0)
+        
+        huge_file = SimpleUploadedFile(
+            'huge.jpg',
+            file.read(),
+            content_type='image/jpeg'
+        )
+        
+        form = DestinationForm(
+            data={'name': 'Huge', 'description': 'Too big', 'slug': 'huge'},
+            files={'image': huge_file}
+        )
+        
+        # Debe fallar la validación
+        if huge_file.size > 5 * 1024 * 1024:
+            self.assertFalse(form.is_valid())
+            self.assertIn('image', form.errors)
