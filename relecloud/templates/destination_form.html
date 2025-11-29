@@ -87,21 +87,36 @@
 
             <div class="form-group">
                 <label for="id_image" class="form-label" onclick="document.getElementById('id_image').focus();">
-                    🖼 Imagen (opcional)
+                    🖼️ Imagen del Destino
                 </label>
+                
+                {% if destination and destination.image %}
+                <div class="current-image-preview">
+                    <div class="preview-label">Imagen actual:</div>
+                    <img src="{{ destination.image.url }}" 
+                         alt="{{ destination.name }}" 
+                         class="current-image" />
+                    <div class="preview-info">
+                        📁 {{ destination.image.name|slice:"11:" }}
+                    </div>
+                </div>
+                {% endif %}
+                
                 <input type="file"
                        name="image"
                        id="id_image"
                        accept=".jpg,.jpeg,.png,.webp"
-                       class="form-control">
-                {% if destination and destination.image %}
-                    <small class="form-text text-muted">Imagen actual:</small>
-                    <img src="{{ destination.image.url }}" alt="{{ destination.name }}" style="max-width:200px;border:1px solid var(--cosmic-blue);margin-top:.5rem;border-radius:8px;" />
-                {% endif %}
+                       class="form-control file-input">
+                
                 {% if form.image.errors %}
                     <div class="alert alert-danger">{{ form.image.errors }}</div>
                 {% endif %}
-                <small class="form-text text-muted">Formatos permitidos: JPG, JPEG, PNG, WEBP. Máx 5MB.</small>
+                <small class="form-text text-muted">
+                    Formatos: JPG, PNG, WEBP • Tamaño máximo: 5MB
+                    {% if not destination or not destination.image %}
+                    <br>Opcional - Deja vacío para usar imagen por defecto
+                    {% endif %}
+                </small>
             </div>
             
             <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 2rem;">
@@ -283,6 +298,58 @@
     border-radius: 4px !important;
     margin-top: 0.5rem !important;
 }
+
+.current-image-preview {
+    background: var(--deep-space) !important;
+    border: 2px solid var(--cosmic-blue) !important;
+    border-radius: 12px !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+    text-align: center !important;
+}
+
+.preview-label {
+    color: var(--plasma-cyan) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.75rem !important;
+    font-size: 0.9rem !important;
+}
+
+.current-image {
+    max-width: 100% !important;
+    max-height: 250px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2) !important;
+    border: 1px solid var(--aurora-green) !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+.preview-info {
+    color: var(--text-secondary) !important;
+    font-size: 0.85rem !important;
+    margin-top: 0.5rem !important;
+}
+
+.file-input {
+    cursor: pointer !important;
+}
+
+.file-input::-webkit-file-upload-button {
+    background: var(--cosmic-blue) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+.file-input::-webkit-file-upload-button:hover {
+    background: var(--plasma-cyan) !important;
+    transform: translateY(-2px) !important;
+}
+
 </style>
 
 {% endblock content %}
