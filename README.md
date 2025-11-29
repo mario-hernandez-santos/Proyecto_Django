@@ -22,10 +22,10 @@
 | Nombre | Rol | GitHub |
 |--------|-----|--------|
 | **Mario Hernández Santos** | Scrum Master | [GitHub](https://github.com/mario-hernandez-santos) |
-| **Nicolás Sanchidrián Infante** | Backend Developer | [GitHub](#) |
-| **Jesús de Andrés de las Heras** | Frontend Developer | [GitHub](#) |
-| **Alejandro de Pazos Tena** | QA Engineer | [GitHub](#) |
-| **Gonzalo de Lorenzo Vaquero** | DevOps Engineer | [GitHub](#) |
+| **Nicolás Sanchidrián Infante** | Backend Developer | [GitHub](https://github.com/nicolas-sanchidrian-infante) |
+| **Jesús de Andrés de las Heras** | Frontend Developer | [GitHub](https://github.com/jesus-deandres-delasheras) |
+| **Alejandro de Pazos Tena** | QA Engineer | [GitHub](https://github.com/alejandro-depazos-tena) |
+| **Gonzalo de Lorenzo Vaquero** | DevOps Engineer | [GitHub](https://github.com/gonzalo-delorenzo-vaquero) |
 
 ---
 
@@ -35,9 +35,8 @@
 |-----|--------|-------------|
 | 🏫 **Universidad** | UFV | Grado en Ingeniería Informática |
 | 📚 **Asignatura** | Ingeniería del Software 2 | 3º Curso - 2025/2026 |
-| 👨‍🏫 **Profesor** | Alberto Fernández Bravo | EPS |
-| 🤝 **Stakeholder** | ReleCloud Corporation | Alberto Fernández Bravo |
-| 📅 **Período** | Noviembre - Diciembre 2025 | Práctica 2 |
+| 👨‍🏫 **Profesor y Stakeholder** | Alberto Fernández Bravo | EPS |
+| 📅 **Periodo** | Noviembre - Diciembre 2025 | Práctica 2 |
 
 ---
 
