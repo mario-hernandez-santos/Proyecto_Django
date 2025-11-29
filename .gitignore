@@ -12,8 +12,8 @@ ENV/
 .pyenv/
 .env/
 
-# Media files (user uploads)
-media/
+# Media files (user uploads) - DECISIÓN EQUIPO: versionar imágenes
+# media/
 
 # Distribution / packaging
 build/
