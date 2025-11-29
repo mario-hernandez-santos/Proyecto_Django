@@ -18,6 +18,13 @@ ReleCloud - {{ destination.name }}
     <div class="hero" style="background-image: url('{% static 'res/space-background.svg' %}'); background-size: cover;">
         <h1>🪐 {{ destination.name }}</h1>
         <p>Descubre este fascinante destino espacial</p>
+        <div style="margin-top:1rem;">
+            {% if destination.image %}
+                <img src="{{ destination.image.url }}" alt="{{ destination.name }}" style="max-width:300px;border:2px solid var(--plasma-cyan);border-radius:12px;" />
+            {% else %}
+                <img src="{% static 'img/planet-icon.svg' %}" alt="Sin imagen" style="max-width:180px;opacity:.6;" />
+            {% endif %}
+        </div>
     </div>
     
     <!-- Información principal -->

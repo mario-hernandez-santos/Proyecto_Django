@@ -1,6 +1,9 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
+import uuid
+import os
 
 # Create your models here.
 class Destination(models.Model):
@@ -16,6 +19,17 @@ class Destination(models.Model):
         max_length=2000
     )
     slug = models.SlugField()
+    def destination_image_upload_path(instance, filename):
+        ext = os.path.splitext(filename)[1].lower()
+        return f"destinations/{uuid.uuid4().hex}{ext}"
+
+    image = models.ImageField(
+        upload_to=destination_image_upload_path,
+        null=True,
+        blank=True,
+        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'webp'])],
+        help_text='Imagen del destino (formatos permitidos: JPG, JPEG, PNG, WEBP, máximo 5MB)'
+    )
     def __str__(self):
         return self.name
     

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . import models
+from . import models
+from .forms import DestinationForm
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -29,13 +31,13 @@ class DestinationDetailView(generic.DetailView):
     
 class DestinationCreateView(generic.CreateView):
     model = models.Destination
-    fields = ['name', 'description', 'slug']
+    form_class = DestinationForm
     template_name = 'destination_form.html'
     success_url = reverse_lazy('destinations')
     
 class DestinationUpdateView(generic.UpdateView):
     model = models.Destination
-    fields = ['name', 'description', 'slug']
+    form_class = DestinationForm
     template_name = 'destination_form.html'
     success_url = reverse_lazy('destinations')  
 

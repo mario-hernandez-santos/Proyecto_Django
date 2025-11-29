@@ -25,7 +25,7 @@
     </div>
     
     <div class="destination-card animate-slide-up">
-        <form method="post" class="space-form">
+        <form method="post" enctype="multipart/form-data" class="space-form">
             {% csrf_token %}
             
             <div class="form-group">
@@ -83,6 +83,25 @@
                 {% if form.slug.errors %}
                     <div class="alert alert-danger">{{ form.slug.errors }}</div>
                 {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="id_image" class="form-label" onclick="document.getElementById('id_image').focus();">
+                    🖼 Imagen (opcional)
+                </label>
+                <input type="file"
+                       name="image"
+                       id="id_image"
+                       accept=".jpg,.jpeg,.png,.webp"
+                       class="form-control">
+                {% if destination and destination.image %}
+                    <small class="form-text text-muted">Imagen actual:</small>
+                    <img src="{{ destination.image.url }}" alt="{{ destination.name }}" style="max-width:200px;border:1px solid var(--cosmic-blue);margin-top:.5rem;border-radius:8px;" />
+                {% endif %}
+                {% if form.image.errors %}
+                    <div class="alert alert-danger">{{ form.image.errors }}</div>
+                {% endif %}
+                <small class="form-text text-muted">Formatos permitidos: JPG, JPEG, PNG, WEBP. Máx 5MB.</small>
             </div>
             
             <div class="form-actions" style="display: flex; gap: 1rem; margin-top: 2rem;">
