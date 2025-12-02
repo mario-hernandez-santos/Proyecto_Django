@@ -39,6 +39,14 @@ ReleCloud - Destinos Espaciales
                             <img src="{% static 'img/planet-icon.svg' %}" alt="Sin imagen" style="width:120px;opacity:.5;" />
                         </div>
                     {% endif %}
+                    
+                    <!-- Badge de popularidad -->
+                    {% if destination.num_reviews > 0 %}
+                    <div style="position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #FFD700, #FFA500); padding: 0.5rem 1rem; border-radius: 20px; font-weight: bold; color: #000; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);">
+                        ⭐ {{ destination.avg_rating|floatformat:1 }}
+                    </div>
+                    {% endif %}
+                    
                     <!-- Información del destino -->
                     <h3 style="text-align: center; margin-bottom: 1rem;">
                         🪐 {{ destination.name }}
@@ -47,6 +55,28 @@ ReleCloud - Destinos Espaciales
                     <p style="text-align: center; margin-bottom: 1.5rem; opacity: 0.9;">
                         {{ destination.description|truncatewords:25 }}
                     </p>
+                    
+                    <!-- Estadísticas de popularidad -->
+                    {% if destination.num_reviews > 0 %}
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 2px solid rgba(255, 215, 0, 0.3); text-align: center;">
+                        <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <div style="font-size: 1.5rem; color: #FFD700;">⭐</div>
+                                <div style="font-size: 1.2rem; font-weight: bold; color: #FFD700;">{{ destination.avg_rating|floatformat:1|default:"0.0" }}</div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">Puntuación</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 1.5rem; color: var(--plasma-cyan);">💬</div>
+                                <div style="font-size: 1.2rem; font-weight: bold; color: var(--plasma-cyan);">{{ destination.num_reviews }}</div>
+                                <div style="font-size: 0.8rem; opacity: 0.8;">Review{{ destination.num_reviews|pluralize }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div style="background: rgba(128, 128, 128, 0.1); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; text-align: center; opacity: 0.7;">
+                        <small>🌟 Sin valoraciones aún</small>
+                    </div>
+                    {% endif %}
                     
                     <!-- Información adicional -->
                     <div style="background: rgba(0, 212, 255, 0.1); padding: 0.8rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid var(--plasma-cyan);">
