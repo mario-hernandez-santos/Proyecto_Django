@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 from .models import Destination, Cruise, Comment
 
 
@@ -228,3 +229,183 @@ class CommentValidationTest(TestCase):
         # así que verificamos que el max_length está definido
         content_field = Comment._meta.get_field('content')
         self.assertEqual(content_field.max_length, 1000)
+
+
+class ReviewModelTest(TestCase):
+    """Tests para el modelo Review (TDD - Red Phase)"""
+    
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass123'
+        )
+        self.destination = Destination.objects.create(
+            name='Test Destination',
+            description='Test Description',
+            slug='test-destination'
+        )
+        self.cruise = Cruise.objects.create(
+            name='Test Cruise',
+            description='Test Cruise Description'
+        )
+    
+    def test_review_creation_for_destination(self):
+        """Test: crear una review para un destino con puntuación"""
+        from .models import Review
+        review = Review.objects.create(
+            user=self.user,
+            destination=self.destination,
+            rating=5,
+            comment='Excelente destino!'
+        )
+        self.assertEqual(review.user, self.user)
+        self.assertEqual(review.destination, self.destination)
+        self.assertEqual(review.rating, 5)
+        self.assertEqual(review.comment, 'Excelente destino!')
+        self.assertIsNotNone(review.created_at)
+    
+    def test_review_creation_for_cruise(self):
+        """Test: crear una review para un crucero con puntuación"""
+        from .models import Review
+        review = Review.objects.create(
+            user=self.user,
+            cruise=self.cruise,
+            rating=4,
+            comment='Muy buen crucero'
+        )
+        self.assertEqual(review.user, self.user)
+        self.assertEqual(review.cruise, self.cruise)
+        self.assertEqual(review.rating, 4)
+    
+    def test_review_rating_must_be_between_1_and_5(self):
+        """Test: la puntuación debe estar entre 1 y 5"""
+        from .models import Review
+        # Test rating menor que 1
+        review_low = Review(
+            user=self.user,
+            destination=self.destination,
+            rating=0,
+            comment='Test'
+        )
+        with self.assertRaises(ValidationError):
+            review_low.full_clean()
+        
+        # Test rating mayor que 5
+        review_high = Review(
+            user=self.user,
+            destination=self.destination,
+            rating=6,
+            comment='Test'
+        )
+        with self.assertRaises(ValidationError):
+            review_high.full_clean()
+    
+    def test_review_rating_is_required(self):
+        """Test: la puntuación es obligatoria"""
+        from .models import Review
+        review = Review(
+            user=self.user,
+            destination=self.destination,
+            comment='Test'
+        )
+        with self.assertRaises(ValidationError):
+            review.full_clean()
+    
+    def test_user_can_only_review_destination_once(self):
+        """Test: un usuario solo puede hacer una review por destino"""
+        from .models import Review
+        from django.db import IntegrityError
+        
+        Review.objects.create(
+            user=self.user,
+            destination=self.destination,
+            rating=5,
+            comment='Primera review'
+        )
+        
+        # Intentar crear segunda review del mismo usuario para el mismo destino
+        with self.assertRaises(IntegrityError):
+            Review.objects.create(
+                user=self.user,
+                destination=self.destination,
+                rating=4,
+                comment='Segunda review'
+            )
+    
+    def test_user_can_only_review_cruise_once(self):
+        """Test: un usuario solo puede hacer una review por crucero"""
+        from .models import Review
+        from django.db import IntegrityError
+        
+        Review.objects.create(
+            user=self.user,
+            cruise=self.cruise,
+            rating=5,
+            comment='Primera review'
+        )
+        
+        # Intentar crear segunda review del mismo usuario para el mismo crucero
+        with self.assertRaises(IntegrityError):
+            Review.objects.create(
+                user=self.user,
+                cruise=self.cruise,
+                rating=3,
+                comment='Segunda review'
+            )
+    
+    def test_review_must_have_destination_or_cruise(self):
+        """Test: una review debe tener destino o crucero (no ambos, no ninguno)"""
+        from .models import Review
+        
+        # Test sin destino ni crucero
+        review_empty = Review(
+            user=self.user,
+            rating=5,
+            comment='Test'
+        )
+        with self.assertRaises(ValidationError):
+            review_empty.full_clean()
+    
+    def test_review_comment_is_optional(self):
+        """Test: el comentario es opcional, pero la puntuación no"""
+        from .models import Review
+        review = Review.objects.create(
+            user=self.user,
+            destination=self.destination,
+            rating=5
+        )
+        self.assertEqual(review.comment, '')
+    
+    def test_review_str_method(self):
+        """Test: verificar el método __str__ de la review"""
+        from .models import Review
+        review = Review.objects.create(
+            user=self.user,
+            destination=self.destination,
+            rating=5,
+            comment='Excelente'
+        )
+        expected_str = f'{self.user.username} - {self.destination.name} - 5 stars'
+        self.assertEqual(str(review), expected_str)
+    
+    def test_review_ordering(self):
+        """Test: las reviews se ordenan por fecha de creación (más recientes primero)"""
+        from .models import Review
+        review1 = Review.objects.create(
+            user=self.user,
+            destination=self.destination,
+            rating=5,
+            comment='Primera'
+        )
+        
+        user2 = User.objects.create_user(username='user2', password='pass123')
+        review2 = Review.objects.create(
+            user=user2,
+            destination=self.destination,
+            rating=4,
+            comment='Segunda'
+        )
+        
+        reviews = Review.objects.all()
+        self.assertEqual(reviews[0], review2)
+        self.assertEqual(reviews[1], review1)
