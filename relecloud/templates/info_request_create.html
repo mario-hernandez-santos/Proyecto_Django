@@ -71,6 +71,23 @@ ReleCloud - Solicitar Información
       <div class="form-wrapper">
         <div class="form-card">
           <h2>📝 Completa tus datos</h2>
+          
+          {% if user.is_authenticated %}
+          <div style="background: rgba(0, 212, 255, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; border: 2px solid var(--plasma-cyan);">
+            <p style="color: var(--plasma-cyan); margin: 0; font-size: 0.95rem;">
+              👤 <strong>{{ user.username }}</strong> - Al completar esta solicitud, podrás valorar inmediatamente el crucero y sus destinos.
+            </p>
+          </div>
+          {% else %}
+          <div style="background: rgba(255, 193, 7, 0.1); padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; border: 2px solid #ffc107;">
+            <p style="color: #ffc107; margin: 0; font-size: 0.95rem;">
+              💡 <strong>Tip:</strong> 
+              <a href="{% url 'admin:login' %}?next={{ request.path }}" style="color: var(--plasma-cyan); text-decoration: underline;">Inicia sesión</a> 
+              para que tu compra quede vinculada a tu cuenta y puedas valorar el crucero inmediatamente.
+            </p>
+          </div>
+          {% endif %}
+          
           <form method="post" class="space-form">
             {% csrf_token %}
 

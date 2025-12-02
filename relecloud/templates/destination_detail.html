@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 ReleCloud - {{ destination.name }}
@@ -143,6 +144,116 @@ ReleCloud - {{ destination.name }}
         </div>
         {% endif %}
     </div>
+    
+    <!-- Sección de REVIEWS (Valoraciones) -->
+    <div class="destination-card animate-slide-up">
+        <h2 style="color: var(--plasma-cyan); margin-bottom: 1.5rem;">
+            ⭐ Valoraciones de Clientes
+        </h2>
+        
+        {% if user.is_authenticated %}
+            {% if can_review %}
+            <!-- Formulario para agregar review -->
+            <div style="background: rgba(26, 26, 46, 0.6); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border: 2px solid gold; position: relative; z-index: 1;">
+                <h3 style="color: gold; margin-bottom: 1rem;">⭐ Valora tu experiencia</h3>
+                <p style="opacity: 0.8; margin-bottom: 1rem;">Has comprado un crucero que visitó este destino. ¡Comparte tu valoración!</p>
+                <form method="post" action="{% url 'destination_review' destination.pk %}">
+                    {% csrf_token %}
+                    <div style="margin-bottom: 1rem;">
+                        <label for="id_rating" style="display: block; margin-bottom: 0.5rem; color: var(--plasma-cyan);">Puntuación *</label>
+                        <select name="rating" id="id_rating" required style="width: 100%; padding: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 5px;">
+                            <option value="">Selecciona una puntuación</option>
+                            <option value="1">⭐ 1 estrella</option>
+                            <option value="2">⭐⭐ 2 estrellas</option>
+                            <option value="3">⭐⭐⭐ 3 estrellas</option>
+                            <option value="4">⭐⭐⭐⭐ 4 estrellas</option>
+                            <option value="5">⭐⭐⭐⭐⭐ 5 estrellas</option>
+                        </select>
+                        <small style="display: block; margin-top: 0.25rem; opacity: 0.7;">Califica tu experiencia de 1 a 5 estrellas</small>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="id_comment" style="display: block; margin-bottom: 0.5rem; color: var(--plasma-cyan);">Comentario *</label>
+                        <textarea name="comment" id="id_comment" rows="4" required style="width: 100%; padding: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 5px; resize: vertical;"></textarea>
+                        <small style="display: block; margin-top: 0.25rem; opacity: 0.7;">Comparte tu opinión sobre este destino</small>
+                    </div>
+                    <button type="submit" class="btn" style="margin-top: 1rem; background: gold; color: black; position: relative; z-index: 10;">
+                        ⭐ Publicar Valoración
+                    </button>
+                </form>
+            </div>
+            {% elif has_reviewed %}
+            <!-- Ya ha valorado -->
+            <div style="background: rgba(0, 212, 255, 0.1); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border: 2px solid var(--plasma-cyan); text-align: center;">
+                <p style="color: var(--plasma-cyan); font-size: 1.1rem;">
+                    ✅ Ya has valorado este destino. ¡Gracias por tu opinión!
+                </p>
+            </div>
+            {% else %}
+            <!-- No ha comprado -->
+            <div style="background: rgba(255, 193, 7, 0.1); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border: 2px solid #ffc107; text-align: center;">
+                <p style="color: #ffc107; font-size: 1.1rem;">
+                    🛒 Solo clientes que hayan comprado un crucero que visite este destino pueden valorarlo.
+                </p>
+            </div>
+            {% endif %}
+        {% else %}
+        <!-- Usuario no autenticado -->
+        <div style="background: rgba(255, 193, 7, 0.1); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border: 2px solid #ffc107; text-align: center;">
+            <p style="color: #ffc107; font-size: 1.1rem;">
+                🔒 Debes <a href="{% url 'admin:login' %}?next={{ request.path }}" style="color: var(--plasma-cyan); text-decoration: underline;">iniciar sesión</a> y haber comprado un crucero para valorar
+            </p>
+        </div>
+        {% endif %}
+        
+        <!-- Lista de reviews -->
+        {% if reviews %}
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for review in reviews %}
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; border-left: 4px solid gold;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <strong style="color: var(--plasma-cyan);">👤 {{ review.user.username }}</strong>
+                        <span style="color: gold; font-size: 1.2rem;">{{ review.stars_display }}</span>
+                        <span style="color: var(--meteor-silver); font-size: 0.9rem;">({{ review.rating }}/5)</span>
+                    </div>
+                    <span style="color: var(--meteor-silver); font-size: 0.9rem;">
+                        🕐 {{ review.created_at|date:"d/m/Y H:i" }}
+                    </span>
+                </div>
+                {% if review.comment %}
+                <p style="line-height: 1.6; margin: 0.5rem 0 0 0;">{{ review.comment }}</p>
+                {% else %}
+                <p style="line-height: 1.6; margin: 0.5rem 0 0 0; opacity: 0.6; font-style: italic;">Sin comentario adicional</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 2rem; opacity: 0.7;">
+            <p style="color: var(--meteor-silver); font-size: 1.1rem;">
+                ⭐ Aún no hay valoraciones de este destino. ¡Sé el primero en valorarlo!
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Call to Action: Comprar Crucero -->
+    {% if destination.cruises.all %}
+    <div class="destination-card animate-slide-up" style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(157, 78, 221, 0.1)); border: 2px solid var(--plasma-cyan); text-align: center;">
+        <h2 style="color: var(--plasma-cyan); margin-bottom: 1rem;">
+            🎫 ¿Listo para visitar {{ destination.name }}?
+        </h2>
+        <p style="font-size: 1.1rem; margin-bottom: 1.5rem; opacity: 0.9;">
+            Solicita información sobre los cruceros que incluyen este destino
+        </p>
+        <a href="{% url 'info_request' %}" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem;">
+            🚀 Solicitar Información de Compra
+        </a>
+        <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">
+            💡 Podrás dejar valoraciones inmediatamente después de la compra
+        </p>
+    </div>
+    {% endif %}
     
     <!-- Navegación adicional -->
     <div style="text-align: center; margin: 3rem 0;">
