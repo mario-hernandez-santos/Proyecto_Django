@@ -123,6 +123,5 @@ class InfoRequestAdmin(admin.ModelAdmin):
 
 
 # Register other models
-admin.site.register(models.Destination)
 admin.site.register(models.Cruise)
 admin.site.register(models.Comment)

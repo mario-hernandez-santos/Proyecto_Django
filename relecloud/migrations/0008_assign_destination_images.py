@@ -16,7 +16,6 @@ def assign_images(apps, schema_editor):
         'luna': 'destinations/b1ab583ffe7f48d6ab0aad85849c523d.jpg',
         'Mars': 'destinations/4c66c507ded8411189cbb9d8152423bb.jpg',
         'Hoth': 'destinations/8c3d438b723e4f2fa779dded0d9f1450.jpg',
-        'GonyiWorld': 'destinations/4b22298a5b0d45be88a21a7f3612eab9.jpg',
         'AlibaBaT': 'destinations/b2f9cc0bc9e84ec28d7cf2d0a59c698b.jpg',
         'LarenDOT': 'destinations/4f709e5a1f3548619fe2be4249f2fc7d.jpg',
         'TebiWorldy': 'destinations/1fcbaabd1378440f833ee1fc8e9b4656.jpg',
@@ -24,7 +23,9 @@ def assign_images(apps, schema_editor):
         'Mustafar': 'destinations/52debcc1cd9141e5bc25c559b56cb689.jpg',
         'Bespin': 'destinations/ed85887b27fd419aa271d4056ff9c442.jpg',
         'Aelix2': 'destinations/6a0cc257c7a540c29e5fa7bde771b52b.jpg',
-        'Mario atleti': 'destinations/e1d29d7153d9417185c532d2eb76b663.jpg',
+        'Mario atleti': 'destinations/2b21b3247d884c30bda83c8d7b31125b.jpg',
+        'PERTUSATO': 'destinations/11a4e8e1fb784bdebd1e884a1754ed3e.jpg',
+        'GonyiWorld': 'destinations/4b22298a5b0d45be88a21a7f3612eab9.jpg',
     }
     
     # Asignar imágenes solo si el destino no tiene una ya
@@ -61,7 +62,8 @@ def reverse_assign_images(apps, schema_editor):
         'destinations/52debcc1cd9141e5bc25c559b56cb689.jpg',
         'destinations/ed85887b27fd419aa271d4056ff9c442.jpg',
         'destinations/6a0cc257c7a540c29e5fa7bde771b52b.jpg',
-        'destinations/e1d29d7153d9417185c532d2eb76b663.jpg',
+        'destinations/2b21b3247d884c30bda83c8d7b31125b.jpg',
+        'destinations/11a4e8e1fb784bdebd1e884a1754ed3e.jpg',
     ]
     
     Destination.objects.filter(image__in=image_paths).update(image='')
