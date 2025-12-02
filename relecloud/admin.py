@@ -122,7 +122,6 @@ class InfoRequestAdmin(admin.ModelAdmin):
     reject_requests.short_description = '❌ Marcar como pendiente'
 
 
-# Register other models
-admin.site.register(models.Destination)
+# Register other models (Destination ya está registrado con @admin.register arriba)
 admin.site.register(models.Cruise)
 admin.site.register(models.Comment)

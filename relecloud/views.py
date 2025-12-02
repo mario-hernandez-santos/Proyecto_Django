@@ -10,6 +10,12 @@ from django.contrib import messages
 from django.db.models import Count, Avg, F, Q
 from django.core.exceptions import ValidationError
 from .forms import ReviewForm
+from django.core.mail import send_mail
+from django.conf import settings
+import logging
+
+# Configurar logger para errores de email
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 def index(request):
@@ -130,7 +136,7 @@ class InfoRequestCreateView(SuccessMessageMixin, generic.CreateView):
     fields = ['name', 'email', 'notes', 'cruise']
     template_name = 'info_request_create.html'
     success_url = reverse_lazy('index')
-    success_message = "¡Tu compra ha sido confirmada! Ahora puedes valorar el crucero y sus destinos."
+    success_message = "¡Tu solicitud ha sido enviada! Revisa tu correo para más detalles."
     
     def get_initial(self):
         """Pre-rellenar datos del usuario si está autenticado."""
@@ -141,7 +147,7 @@ class InfoRequestCreateView(SuccessMessageMixin, generic.CreateView):
         return initial
     
     def form_valid(self, form):
-        """Asociar el usuario actual a la solicitud si está autenticado."""
+        """Asociar el usuario actual a la solicitud si está autenticado y enviar email de confirmación."""
         if self.request.user.is_authenticated:
             form.instance.user = self.request.user
             form.instance.approved = True
@@ -149,7 +155,50 @@ class InfoRequestCreateView(SuccessMessageMixin, generic.CreateView):
                 self.request,
                 '🎉 ¡Compra confirmada! Ahora puedes dejar valoraciones sobre el crucero y sus destinos.'
             )
-        return super().form_valid(form)
+        
+        # Guardar el formulario
+        response = super().form_valid(form)
+        
+        # Obtener la solicitud creada
+        info_request = form.instance
+        
+        # Enviar email al usuario
+        try:
+            send_mail(
+                subject=f'ReleCloud - Información sobre {info_request.cruise.name}',
+                message=f'''Hola {info_request.name},
+
+¡Gracias por tu interés en ReleCloud! 🚀
+
+Has solicitado información sobre: {info_request.cruise.name}
+
+📝 Descripción del crucero:
+{info_request.cruise.description}
+
+💬 Tus notas:
+{info_request.notes}
+
+Nos pondremos en contacto contigo pronto para ayudarte a planificar tu aventura espacial.
+
+¡Prepárate para explorar el universo!
+
+Saludos,
+Equipo ReleCloud 🌌
+                ''',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[info_request.email],
+                fail_silently=False,
+            )
+            logger.info(f'Email enviado correctamente a {info_request.email}')
+        except Exception as e:
+            # Registrar el error pero no fallar la solicitud
+            logger.error(f'Error al enviar email a {info_request.email}: {str(e)}')
+            messages.warning(
+                self.request,
+                'Tu solicitud fue guardada correctamente, pero hubo un problema al enviar el email de confirmación.'
+            )
+        
+        return response
 
 @login_required
 def add_destination_comment(request, pk):

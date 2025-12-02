@@ -174,3 +174,19 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 # File upload settings
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# Email settings
+# Para desarrollo: los emails se mostrarán en la consola
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Remitente por defecto
+DEFAULT_FROM_EMAIL = 'noreply@relecloud.space'
+SERVER_EMAIL = 'server@relecloud.space'
+
+# Para producción con SMTP real (configurar con variables de entorno):
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+# EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
