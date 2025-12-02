@@ -314,7 +314,6 @@ class ReviewModelTest(TestCase):
     def test_user_can_only_review_destination_once(self):
         """Test: un usuario solo puede hacer una review por destino"""
         from .models import Review
-        from django.db import IntegrityError
         
         Review.objects.create(
             user=self.user,
@@ -324,7 +323,7 @@ class ReviewModelTest(TestCase):
         )
         
         # Intentar crear segunda review del mismo usuario para el mismo destino
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValidationError):
             Review.objects.create(
                 user=self.user,
                 destination=self.destination,
@@ -335,7 +334,6 @@ class ReviewModelTest(TestCase):
     def test_user_can_only_review_cruise_once(self):
         """Test: un usuario solo puede hacer una review por crucero"""
         from .models import Review
-        from django.db import IntegrityError
         
         Review.objects.create(
             user=self.user,
@@ -345,7 +343,7 @@ class ReviewModelTest(TestCase):
         )
         
         # Intentar crear segunda review del mismo usuario para el mismo crucero
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValidationError):
             Review.objects.create(
                 user=self.user,
                 cruise=self.cruise,
@@ -385,7 +383,7 @@ class ReviewModelTest(TestCase):
             rating=5,
             comment='Excelente'
         )
-        expected_str = f'{self.user.username} - {self.destination.name} - 5 stars'
+        expected_str = f'{self.user.username} - {self.destination.name} - 5 estrellas'
         self.assertEqual(str(review), expected_str)
     
     def test_review_ordering(self):

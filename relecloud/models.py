@@ -99,43 +99,61 @@ class Comment(models.Model):
 
 
 class Review(models.Model):
+    """Modelo para las opiniones/reviews de usuarios sobre destinos y cruceros.
+    
+    Cada usuario puede dejar una review por destino o crucero, incluyendo
+    una puntuación de 1-5 estrellas y un comentario opcional.
+    """
+    
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews'
+        related_name='reviews',
+        verbose_name='Usuario'
     )
     destination = models.ForeignKey(
         Destination,
         on_delete=models.CASCADE,
         related_name='reviews',
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Destino'
     )
     cruise = models.ForeignKey(
         Cruise,
         on_delete=models.CASCADE,
         related_name='reviews',
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Crucero'
     )
     rating = models.IntegerField(
         validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5)
+            MinValueValidator(1, message='La puntuación mínima es 1 estrella.'),
+            MaxValueValidator(5, message='La puntuación máxima es 5 estrellas.')
         ],
         null=False,
-        blank=False
+        blank=False,
+        verbose_name='Puntuación',
+        help_text='Puntuación de 1 a 5 estrellas'
     )
     comment = models.TextField(
         max_length=1000,
         null=False,
         blank=True,
-        default=''
+        default='',
+        verbose_name='Comentario',
+        help_text='Comentario opcional (máximo 1000 caracteres)'
     )
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de creación'
+    )
     
     class Meta:
         ordering = ['-created_at']
+        verbose_name = 'Review'
+        verbose_name_plural = 'Reviews'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'destination'],
@@ -150,15 +168,36 @@ class Review(models.Model):
         ]
     
     def clean(self):
-        # Validar que tenga destino O crucero, no ambos ni ninguno
+        """Validar que la review tenga destino O crucero, no ambos ni ninguno."""
         if not self.destination and not self.cruise:
-            raise ValidationError('La review debe tener un destino o un crucero.')
+            raise ValidationError(
+                'La review debe estar asociada a un destino o a un crucero.'
+            )
         if self.destination and self.cruise:
-            raise ValidationError('La review no puede tener destino y crucero al mismo tiempo.')
+            raise ValidationError(
+                'La review no puede estar asociada a un destino y a un crucero simultáneamente.'
+            )
+    
+    def save(self, *args, **kwargs):
+        """Sobrescribir save para ejecutar validaciones."""
+        self.full_clean()
+        super().save(*args, **kwargs)
+    
+    @property
+    def target(self):
+        """Retorna el objetivo de la review (destino o crucero)."""
+        return self.destination or self.cruise
+    
+    @property
+    def target_name(self):
+        """Retorna el nombre del objetivo de la review."""
+        target = self.target
+        return target.name if target else 'Sin objetivo'
+    
+    @property
+    def stars_display(self):
+        """Retorna una representación visual de las estrellas."""
+        return '⭐' * self.rating
     
     def __str__(self):
-        if self.destination:
-            return f'{self.user.username} - {self.destination.name} - {self.rating} stars'
-        elif self.cruise:
-            return f'{self.user.username} - {self.cruise.name} - {self.rating} stars'
-        return f'{self.user.username} - Review'
+        return f'{self.user.username} - {self.target_name} - {self.rating} estrellas'
