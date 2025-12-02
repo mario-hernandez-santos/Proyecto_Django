@@ -248,6 +248,18 @@ class ReviewModelTest(TestCase):
             name='Test Cruise',
             description='Test Cruise Description'
         )
+        self.cruise.destinations.add(self.destination)
+        
+        # Crear InfoRequest aprobado para que el usuario pueda hacer reviews
+        from .models import InfoRequest
+        InfoRequest.objects.create(
+            user=self.user,
+            name='Test User',
+            email='test@example.com',
+            notes='Test purchase',
+            cruise=self.cruise,
+            approved=True
+        )
     
     def test_review_creation_for_destination(self):
         """Test: crear una review para un destino con puntuación"""
@@ -388,7 +400,7 @@ class ReviewModelTest(TestCase):
     
     def test_review_ordering(self):
         """Test: las reviews se ordenan por fecha de creación (más recientes primero)"""
-        from .models import Review
+        from .models import Review, InfoRequest
         review1 = Review.objects.create(
             user=self.user,
             destination=self.destination,
@@ -397,6 +409,15 @@ class ReviewModelTest(TestCase):
         )
         
         user2 = User.objects.create_user(username='user2', password='pass123')
+        # Crear InfoRequest aprobado para user2
+        InfoRequest.objects.create(
+            user=user2,
+            name='User 2',
+            email='user2@example.com',
+            notes='Test purchase',
+            cruise=self.cruise,
+            approved=True
+        )
         review2 = Review.objects.create(
             user=user2,
             destination=self.destination,
@@ -429,9 +450,42 @@ class DestinationPopularityTest(TestCase):
             slug='new-york'
         )
         
+        # Crear cruceros que incluyan los destinos
+        self.cruise1 = Cruise.objects.create(
+            name='European Tour',
+            description='Tour por Europa'
+        )
+        self.cruise1.destinations.add(self.destination1)
+        
+        self.cruise2 = Cruise.objects.create(
+            name='Asian Tour',
+            description='Tour por Asia'
+        )
+        self.cruise2.destinations.add(self.destination2)
+        
+        self.cruise3 = Cruise.objects.create(
+            name='American Tour',
+            description='Tour por América'
+        )
+        self.cruise3.destinations.add(self.destination3)
+        
+        # Crear usuarios
         self.user1 = User.objects.create_user(username='user1', password='pass123')
         self.user2 = User.objects.create_user(username='user2', password='pass123')
         self.user3 = User.objects.create_user(username='user3', password='pass123')
+        
+        # Crear InfoRequests aprobados para todos los usuarios en todos los cruceros
+        from .models import InfoRequest
+        for user in [self.user1, self.user2, self.user3]:
+            for cruise in [self.cruise1, self.cruise2, self.cruise3]:
+                InfoRequest.objects.create(
+                    user=user,
+                    name=f'{user.username} name',
+                    email=f'{user.username}@example.com',
+                    notes='Approved purchase',
+                    cruise=cruise,
+                    approved=True
+                )
     
     def test_destination_review_count(self):
         """Test: contar el número de reviews de un destino"""
@@ -510,9 +564,33 @@ class DestinationViewOrderingTest(TestCase):
             slug='new-york'
         )
         
+        # Crear cruceros
+        self.cruise1 = Cruise.objects.create(name='European Tour', description='Tour por Europa')
+        self.cruise1.destinations.add(self.destination1)
+        
+        self.cruise2 = Cruise.objects.create(name='Asian Tour', description='Tour por Asia')
+        self.cruise2.destinations.add(self.destination2)
+        
+        self.cruise3 = Cruise.objects.create(name='American Tour', description='Tour por América')
+        self.cruise3.destinations.add(self.destination3)
+        
+        # Crear usuarios
         self.user1 = User.objects.create_user(username='user1', password='pass123')
         self.user2 = User.objects.create_user(username='user2', password='pass123')
         self.user3 = User.objects.create_user(username='user3', password='pass123')
+        
+        # Crear InfoRequests aprobados
+        from .models import InfoRequest
+        for user in [self.user1, self.user2, self.user3]:
+            for cruise in [self.cruise1, self.cruise2, self.cruise3]:
+                InfoRequest.objects.create(
+                    user=user,
+                    name=f'{user.username} name',
+                    email=f'{user.username}@example.com',
+                    notes='Approved purchase',
+                    cruise=cruise,
+                    approved=True
+                )
     
     def test_destinations_ordered_by_popularity(self):
         """Test: los destinos se ordenan por popularidad en la vista principal"""
@@ -577,3 +655,168 @@ class DestinationViewOrderingTest(TestCase):
         
         # Ahora Tokyo debe estar primero
         self.assertEqual(destinations[0], self.destination2)
+
+
+class ReviewRestrictionTest(TestCase):
+    """Tests para validar que solo usuarios con compras pueden hacer reviews"""
+    
+    def setUp(self):
+        """Configurar usuarios, destinos, cruceros e InfoRequests"""
+        self.user_with_purchase = User.objects.create_user(
+            username='buyer',
+            password='testpass123'
+        )
+        self.user_without_purchase = User.objects.create_user(
+            username='nonbuyer',
+            password='testpass123'
+        )
+        
+        self.destination = Destination.objects.create(
+            name='Caribbean Paradise',
+            description='Beautiful destination',
+            slug='caribbean-paradise'
+        )
+        
+        self.cruise = Cruise.objects.create(
+            name='Caribbean Adventure',
+            description='Amazing cruise'
+        )
+        self.cruise.destinations.add(self.destination)
+        
+        # Usuario que HA comprado (InfoRequest aprobado)
+        from .models import InfoRequest
+        self.approved_request = InfoRequest.objects.create(
+            user=self.user_with_purchase,
+            name='John Buyer',
+            email='buyer@example.com',
+            notes='I want to buy this cruise',
+            cruise=self.cruise,
+            approved=True
+        )
+    
+    def test_user_with_purchase_can_review_destination(self):
+        """Test: usuario con compra aprobada PUEDE hacer review de destino"""
+        from .models import Review
+        
+        review = Review(
+            user=self.user_with_purchase,
+            destination=self.destination,
+            rating=5,
+            comment='Excellent destination!'
+        )
+        
+        # No debe lanzar ValidationError
+        try:
+            review.full_clean()
+            review.save()
+            self.assertTrue(True)
+        except ValidationError:
+            self.fail('Usuario con compra aprobada debería poder hacer review')
+    
+    def test_user_with_purchase_can_review_cruise(self):
+        """Test: usuario con compra aprobada PUEDE hacer review de crucero"""
+        from .models import Review
+        
+        review = Review(
+            user=self.user_with_purchase,
+            cruise=self.cruise,
+            rating=4,
+            comment='Great cruise!'
+        )
+        
+        # No debe lanzar ValidationError
+        try:
+            review.full_clean()
+            review.save()
+            self.assertTrue(True)
+        except ValidationError:
+            self.fail('Usuario con compra aprobada debería poder hacer review')
+    
+    def test_user_without_purchase_cannot_review_destination(self):
+        """Test: usuario SIN compra NO puede hacer review de destino"""
+        from .models import Review
+        
+        review = Review(
+            user=self.user_without_purchase,
+            destination=self.destination,
+            rating=5,
+            comment='I want to review but I have not purchased'
+        )
+        
+        # Debe lanzar ValidationError
+        with self.assertRaises(ValidationError) as context:
+            review.full_clean()
+        
+        self.assertIn('Solo usuarios que hayan comprado', str(context.exception))
+    
+    def test_user_without_purchase_cannot_review_cruise(self):
+        """Test: usuario SIN compra NO puede hacer review de crucero"""
+        from .models import Review
+        
+        review = Review(
+            user=self.user_without_purchase,
+            cruise=self.cruise,
+            rating=5,
+            comment='I want to review but I have not purchased'
+        )
+        
+        # Debe lanzar ValidationError
+        with self.assertRaises(ValidationError) as context:
+            review.full_clean()
+        
+        self.assertIn('Solo usuarios que hayan comprado', str(context.exception))
+    
+    def test_user_with_pending_request_cannot_review(self):
+        """Test: usuario con solicitud NO aprobada NO puede hacer review"""
+        from .models import Review, InfoRequest
+        
+        # Crear usuario con solicitud pendiente (approved=False)
+        user_pending = User.objects.create_user(
+            username='pending',
+            password='testpass123'
+        )
+        InfoRequest.objects.create(
+            user=user_pending,
+            name='Pending User',
+            email='pending@example.com',
+            notes='Waiting for approval',
+            cruise=self.cruise,
+            approved=False
+        )
+        
+        review = Review(
+            user=user_pending,
+            cruise=self.cruise,
+            rating=3,
+            comment='Trying to review with pending request'
+        )
+        
+        # Debe lanzar ValidationError
+        with self.assertRaises(ValidationError) as context:
+            review.full_clean()
+        
+        self.assertIn('Solo usuarios que hayan comprado', str(context.exception))
+    
+    def test_review_validation_checks_destination_purchase(self):
+        """Test: verificar que la compra sea del crucero que incluye el destino"""
+        from .models import Review, InfoRequest
+        
+        # Crear otro destino NO incluido en el crucero comprado
+        other_destination = Destination.objects.create(
+            name='Alaska',
+            description='Cold destination',
+            slug='alaska'
+        )
+        
+        review = Review(
+            user=self.user_with_purchase,
+            destination=other_destination,  # Destino NO comprado
+            rating=5,
+            comment='Trying to review destination not purchased'
+        )
+        
+        # Debe lanzar ValidationError
+        with self.assertRaises(ValidationError) as context:
+            review.full_clean()
+        
+        self.assertIn('no ha comprado ningún crucero', str(context.exception))

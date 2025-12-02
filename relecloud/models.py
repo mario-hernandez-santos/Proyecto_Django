@@ -94,21 +94,58 @@ class Cruise(models.Model):
         return self.name
     
 class InfoRequest(models.Model):
+    """Modelo para solicitudes de información/compra de cruceros.
+    
+    Representa solicitudes de usuarios interesados en comprar un crucero.
+    El campo 'approved' indica si la compra fue confirmada.
+    """
+    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='info_requests',
+        null=True,  # Permitir null para solicitudes antiguas sin usuario
+        blank=True,
+        verbose_name='Usuario'
+    )
     name = models.CharField(
         max_length=50,
         null=False,
         blank=False,
+        verbose_name='Nombre'
     )
-    email = models.EmailField()
+    email = models.EmailField(verbose_name='Email')
     notes = models.TextField(
         max_length=2000,
         null=False,
-        blank=False
+        blank=False,
+        verbose_name='Notas'
     )
     cruise = models.ForeignKey(
         Cruise,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        verbose_name='Crucero'
     )
+    approved = models.BooleanField(
+        default=False,
+        verbose_name='Aprobado',
+        help_text='Indica si la compra fue confirmada'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Fecha de solicitud',
+        null=True,  # Permitir null para registros existentes
+        blank=True
+    )
+    
+    class Meta:
+        verbose_name = 'Solicitud de información'
+        verbose_name_plural = 'Solicitudes de información'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        status = 'Aprobado' if self.approved else 'Pendiente'
+        return f'{self.name} - {self.cruise.name} ({status})'
 
 class Comment(models.Model):
     user = models.ForeignKey(
@@ -218,7 +255,12 @@ class Review(models.Model):
         ]
     
     def clean(self):
-        """Validar que la review tenga destino O crucero, no ambos ni ninguno."""
+        """Validar que la review tenga destino O crucero, no ambos ni ninguno.
+        
+        También valida que el usuario haya comprado (InfoRequest aprobado)
+        el crucero o un crucero que incluya el destino.
+        """
+        # Validación 1: Debe tener destino O crucero
         if not self.destination and not self.cruise:
             raise ValidationError(
                 'La review debe estar asociada a un destino o a un crucero.'
@@ -227,6 +269,38 @@ class Review(models.Model):
             raise ValidationError(
                 'La review no puede estar asociada a un destino y a un crucero simultáneamente.'
             )
+        
+        # Validación 2: El usuario debe tener una compra aprobada
+        if self.user:
+            has_approved_purchase = False
+            
+            if self.cruise:
+                # Verificar compra del crucero
+                has_approved_purchase = InfoRequest.objects.filter(
+                    user=self.user,
+                    cruise=self.cruise,
+                    approved=True
+                ).exists()
+                
+                if not has_approved_purchase:
+                    raise ValidationError(
+                        f'Solo usuarios que hayan comprado el crucero "{self.cruise.name}" pueden hacer reviews.'
+                    )
+            
+            elif self.destination:
+                # Verificar compra de algún crucero que incluya este destino
+                cruises_with_destination = self.destination.cruises.all()
+                has_approved_purchase = InfoRequest.objects.filter(
+                    user=self.user,
+                    cruise__in=cruises_with_destination,
+                    approved=True
+                ).exists()
+                
+                if not has_approved_purchase:
+                    raise ValidationError(
+                        f'Solo usuarios que hayan comprado pueden hacer reviews. '
+                        f'El usuario no ha comprado ningún crucero que incluya el destino "{self.destination.name}".'
+                    )
     
     def save(self, *args, **kwargs):
         """Sobrescribir save para ejecutar validaciones."""
