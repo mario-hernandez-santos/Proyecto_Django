@@ -30,6 +30,15 @@ ReleCloud - Destinos Espaciales
         <div class="destinations-grid">
             {% for destination in destinations %}
                 <div class="destination-card animate-slide-up">
+                    {% if destination.image %}
+                        <div style="text-align:center;margin-bottom:1rem;">
+                            <img src="{{ destination.image.url }}" alt="{{ destination.name }}" style="max-width:220px;border:2px solid var(--plasma-cyan);border-radius:12px;" />
+                        </div>
+                    {% else %}
+                        <div style="text-align:center;margin-bottom:1rem;">
+                            <img src="{% static 'img/planet-icon.svg' %}" alt="Sin imagen" style="width:120px;opacity:.5;" />
+                        </div>
+                    {% endif %}
                     
                     <!-- Badge de popularidad -->
                     {% if destination.num_reviews > 0 %}
