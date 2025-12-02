@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 class Destination(models.Model):
@@ -94,3 +96,69 @@ class Comment(models.Model):
         elif self.cruise:
             return f'{self.user.username} - {self.cruise.name}'
         return f'{self.user.username} - Comment'
+
+
+class Review(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
+    destination = models.ForeignKey(
+        Destination,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        null=True,
+        blank=True
+    )
+    cruise = models.ForeignKey(
+        Cruise,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        null=True,
+        blank=True
+    )
+    rating = models.IntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5)
+        ],
+        null=False,
+        blank=False
+    )
+    comment = models.TextField(
+        max_length=1000,
+        null=False,
+        blank=True,
+        default=''
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'destination'],
+                name='unique_user_destination_review',
+                condition=models.Q(destination__isnull=False)
+            ),
+            models.UniqueConstraint(
+                fields=['user', 'cruise'],
+                name='unique_user_cruise_review',
+                condition=models.Q(cruise__isnull=False)
+            ),
+        ]
+    
+    def clean(self):
+        # Validar que tenga destino O crucero, no ambos ni ninguno
+        if not self.destination and not self.cruise:
+            raise ValidationError('La review debe tener un destino o un crucero.')
+        if self.destination and self.cruise:
+            raise ValidationError('La review no puede tener destino y crucero al mismo tiempo.')
+    
+    def __str__(self):
+        if self.destination:
+            return f'{self.user.username} - {self.destination.name} - {self.rating} stars'
+        elif self.cruise:
+            return f'{self.user.username} - {self.cruise.name} - {self.rating} stars'
+        return f'{self.user.username} - Review'
