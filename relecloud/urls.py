@@ -16,4 +16,8 @@ urlpatterns = [
     path('cruise/<int:pk>/comment/', views.add_cruise_comment, name='cruise_comment'),
     path('cruise/<int:pk>/review/', views.add_cruise_review, name='cruise_review'),
     path('info_request/', views.InfoRequestCreateView.as_view(), name='info_request'),
+    # Autenticación
+    path('register/', views.register_view, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 ]

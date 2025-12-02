@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registrarse - ReleCloud{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 3rem; margin-bottom: 3rem;">
+    <div style="max-width: 500px; margin: 0 auto; background: rgba(10, 15, 35, 0.9); padding: 2.5rem; border-radius: 15px; border: 1px solid rgba(0, 212, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="{% static 'img/rocket-icon.svg' %}" width="60" height="60" alt="ReleCloud" style="margin-bottom: 1rem; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));"/>
+            <h2 style="color: #00d4ff; margin: 0; font-size: 1.8rem;">✨ Crear Cuenta</h2>
+            <p style="color: #a0a0a0; margin-top: 0.5rem;">Únete a la comunidad de exploradores espaciales</p>
+        </div>
+
+        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            
+            <div>
+                <label for="id_username" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    👤 Usuario
+                </label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div style="color: #ff4646; font-size: 0.9rem; margin-top: 0.3rem;">
+                        {{ form.username.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_email" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    📧 Email
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div style="color: #ff4646; font-size: 0.9rem; margin-top: 0.3rem;">
+                        {{ form.email.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_first_name" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    🌟 Nombre
+                </label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}
+                    <div style="color: #ff4646; font-size: 0.9rem; margin-top: 0.3rem;">
+                        {{ form.first_name.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_last_name" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    🌠 Apellidos
+                </label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}
+                    <div style="color: #ff4646; font-size: 0.9rem; margin-top: 0.3rem;">
+                        {{ form.last_name.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <label for="id_password1" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    🔒 Contraseña
+                </label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div style="color: #ff4646; font-size: 0.9rem; margin-top: 0.3rem;">
+                        {{ form.password1.errors.0 }}
+                    </div>
+                {% endif %}
+                <small style="color: #a0a0a0; font-size: 0.85rem; margin-top: 0.3rem; display: block;">
+                    Mínimo 8 caracteres. No puede ser muy común.
+                </small>
+            </div>
+
+            <div>
+                <label for="id_password2" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    🔐 Confirmar Contraseña
+                </label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                    <div style="color: #ff4646; font-size: 0.9rem; margin-top: 0.3rem;">
+                        {{ form.password2.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button 
+                type="submit" 
+                class="btn btn-primary"
+                style="width: 100%; padding: 0.9rem; font-size: 1.1rem; margin-top: 0.5rem;"
+            >
+                ✨ Crear Cuenta
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(0, 212, 255, 0.2);">
+            <p style="color: #a0a0a0; margin-bottom: 1rem;">¿Ya tienes cuenta?</p>
+            <a href="{% url 'login' %}" class="btn btn-secondary">
+                🚀 Iniciar Sesión
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos para campos de formulario */
+    #id_username, #id_email, #id_first_name, #id_last_name, #id_password1, #id_password2 {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(0, 212, 255, 0.3);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    #id_username:focus, #id_email:focus, #id_first_name:focus, #id_last_name:focus, #id_password1:focus, #id_password2:focus {
+        outline: none;
+        border-color: #00d4ff;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+    }
+    
+    .errorlist {
+        display: none;
+    }
+</style>
+{% endblock %}

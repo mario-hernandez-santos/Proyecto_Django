@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión - ReleCloud{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 3rem; margin-bottom: 3rem;">
+    <div style="max-width: 500px; margin: 0 auto; background: rgba(10, 15, 35, 0.9); padding: 2.5rem; border-radius: 15px; border: 1px solid rgba(0, 212, 255, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="{% static 'img/rocket-icon.svg' %}" width="60" height="60" alt="ReleCloud" style="margin-bottom: 1rem; filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.5));"/>
+            <h2 style="color: #00d4ff; margin: 0; font-size: 1.8rem;">🚀 Iniciar Sesión</h2>
+            <p style="color: #a0a0a0; margin-top: 0.5rem;">Accede a tu cuenta de explorador espacial</p>
+        </div>
+
+        <form method="post" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            {% csrf_token %}
+            
+            <div>
+                <label for="id_username" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    👤 Usuario
+                </label>
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="id_username" 
+                    required
+                    style="width: 100%; padding: 0.75rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #fff; font-size: 1rem; transition: all 0.3s ease;"
+                    onfocus="this.style.borderColor='#00d4ff'; this.style.boxShadow='0 0 15px rgba(0, 212, 255, 0.3)'"
+                    onblur="this.style.borderColor='rgba(0, 212, 255, 0.3)'; this.style.boxShadow='none'"
+                />
+            </div>
+
+            <div>
+                <label for="id_password" style="display: block; color: #00d4ff; margin-bottom: 0.5rem; font-weight: 500;">
+                    🔒 Contraseña
+                </label>
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="id_password" 
+                    required
+                    style="width: 100%; padding: 0.75rem; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; color: #fff; font-size: 1rem; transition: all 0.3s ease;"
+                    onfocus="this.style.borderColor='#00d4ff'; this.style.boxShadow='0 0 15px rgba(0, 212, 255, 0.3)'"
+                    onblur="this.style.borderColor='rgba(0, 212, 255, 0.3)'; this.style.boxShadow='none'"
+                />
+            </div>
+
+            {% if form.errors %}
+            <div style="background: rgba(255, 70, 70, 0.1); border: 1px solid rgba(255, 70, 70, 0.3); border-radius: 8px; padding: 1rem; color: #ff4646;">
+                <strong>⚠️ Error:</strong> Usuario o contraseña incorrectos.
+            </div>
+            {% endif %}
+
+            <button 
+                type="submit" 
+                class="btn btn-primary"
+                style="width: 100%; padding: 0.9rem; font-size: 1.1rem; margin-top: 0.5rem;"
+            >
+                🚀 Iniciar Sesión
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(0, 212, 255, 0.2);">
+            <p style="color: #a0a0a0; margin-bottom: 1rem;">¿No tienes cuenta?</p>
+            <a href="{% url 'register' %}" class="btn btn-secondary">
+                ✨ Registrarse
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . import models
 from . import models
-from .forms import DestinationForm
+from .forms import DestinationForm, UserRegistrationForm
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.db.models import Count, Avg, F, Q
 from django.core.exceptions import ValidationError
 from .forms import ReviewForm
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
 def index(request):
@@ -262,3 +264,53 @@ def add_cruise_review(request, pk):
             messages.error(request, 'Debes seleccionar una puntuación.')
     
     return redirect('cruise_detail', pk=pk)
+
+# ============= VISTAS DE AUTENTICACIÓN =============
+
+def register_view(request):
+    """Vista de registro de usuarios."""
+    if request.user.is_authenticated:
+        return redirect('index')
+    
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Iniciar sesión automáticamente después del registro
+            login(request, user)
+            messages.success(
+                request,
+                f'¡Bienvenido, {user.first_name}! Tu cuenta ha sido creada exitosamente. 🚀'
+            )
+            return redirect('index')
+    else:
+        form = UserRegistrationForm()
+    
+    return render(request, 'register.html', {'form': form})
+
+def login_view(request):
+    """Vista de inicio de sesión."""
+    if request.user.is_authenticated:
+        return redirect('index')
+    
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'¡Bienvenido de nuevo, {user.first_name}! 🚀')
+                next_url = request.GET.get('next', 'index')
+                return redirect(next_url)
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, 'login.html', {'form': form})
+
+def logout_view(request):
+    """Vista de cierre de sesión."""
+    logout(request)
+    messages.info(request, '¡Hasta pronto, explorador! Has cerrado sesión exitosamente. 👋')
+    return redirect('index')
