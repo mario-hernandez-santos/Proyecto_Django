@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Count, Avg, F, Q
 
 # Create your views here.
 def index(request):
@@ -14,7 +15,27 @@ def about(request):
     return render(request, 'about.html')
 
 def destinations(request):
-    all_destinations = models.Destination.objects.all()
+    """Vista de destinos ordenados por popularidad.
+    
+    Los destinos se ordenan por:
+    1. Número de reviews (descendente) - más reviews = más popular
+    2. Puntuación media (descendente) - mejor valoración = más popular
+    3. Nombre (alfabético) - desempate final
+    
+    Optimización: Se usa annotate() para calcular review_count y average_rating
+    en la consulta SQL, evitando N+1 queries.
+    
+    Los destinos sin reviews tienen review_count=0 y average_rating=NULL,
+    por lo que aparecen al final de la ordenación.
+    """
+    all_destinations = models.Destination.objects.annotate(
+        review_count_db=Count('reviews'),
+        average_rating_db=Avg('reviews__rating')
+    ).order_by(
+        '-review_count_db',      # Más reviews primero
+        '-average_rating_db',    # Mejor puntuación primero
+        'name'                    # Desempate alfabético
+    )
     return render(request, 'destinations.html', {'destinations': all_destinations})
 
 class DestinationDetailView(generic.DetailView):

@@ -3,26 +3,76 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
+from django.db.models import Count, Avg
 
 # Create your models here.
 class Destination(models.Model):
+    """Modelo para destinos turísticos.
+    
+    Incluye propiedades calculadas para popularidad basadas en reviews.
+    """
+    
     name = models.CharField(
         unique=True,
         null=False,
         blank=False,
-        max_length=50
+        max_length=50,
+        verbose_name='Nombre'
     )
     description = models.TextField(
         null=True,
         blank=False,
-        max_length=2000
+        max_length=2000,
+        verbose_name='Descripción'
     )
-    slug = models.SlugField()
+    slug = models.SlugField(verbose_name='Slug')
+    
+    class Meta:
+        verbose_name = 'Destino'
+        verbose_name_plural = 'Destinos'
+    
     def __str__(self):
         return self.name
     
     def get_absolute_url(self):
         return reverse('destination_detail', kwargs={'pk': self.pk})
+    
+    @property
+    def review_count(self):
+        """Retorna el número de reviews del destino.
+        
+        Nota: Para consultas optimizadas en vistas, usar annotate() en lugar
+        de esta propiedad para evitar N+1 queries.
+        """
+        return self.reviews.count()
+    
+    @property
+    def average_rating(self):
+        """Retorna la puntuación media del destino.
+        
+        Returns:
+            float: Puntuación media redondeada a 1 decimal, o 0 si no hay reviews.
+        
+        Nota: Para consultas optimizadas en vistas, usar annotate() en lugar
+        de esta propiedad para evitar N+1 queries.
+        """
+        avg = self.reviews.aggregate(Avg('rating'))['rating__avg']
+        return round(avg, 1) if avg is not None else 0
+    
+    @property
+    def popularity_score(self):
+        """Calcula un score de popularidad combinando cantidad y calidad de reviews.
+        
+        Fórmula: número_de_reviews * puntuación_media
+        
+        Esto premia tanto la cantidad como la calidad de las reviews.
+        Un destino con muchas reviews de calidad media puede tener un score
+        similar a uno con pocas reviews de máxima calidad.
+        
+        Returns:
+            float: Score de popularidad (0 si no hay reviews).
+        """
+        return self.review_count * self.average_rating
     
 class Cruise(models.Model):
     name = models.CharField(

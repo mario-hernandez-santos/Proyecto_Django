@@ -407,3 +407,173 @@ class ReviewModelTest(TestCase):
         reviews = Review.objects.all()
         self.assertEqual(reviews[0], review2)
         self.assertEqual(reviews[1], review1)
+
+
+class DestinationPopularityTest(TestCase):
+    """Tests para el cálculo de popularidad en destinos (TDD - Red Phase)"""
+    
+    def setUp(self):
+        self.destination1 = Destination.objects.create(
+            name='Paris',
+            description='City of lights',
+            slug='paris'
+        )
+        self.destination2 = Destination.objects.create(
+            name='Tokyo',
+            description='Modern metropolis',
+            slug='tokyo'
+        )
+        self.destination3 = Destination.objects.create(
+            name='New York',
+            description='The big apple',
+            slug='new-york'
+        )
+        
+        self.user1 = User.objects.create_user(username='user1', password='pass123')
+        self.user2 = User.objects.create_user(username='user2', password='pass123')
+        self.user3 = User.objects.create_user(username='user3', password='pass123')
+    
+    def test_destination_review_count(self):
+        """Test: contar el número de reviews de un destino"""
+        from .models import Review
+        
+        # Crear reviews para destination1
+        Review.objects.create(user=self.user1, destination=self.destination1, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination1, rating=4)
+        Review.objects.create(user=self.user3, destination=self.destination1, rating=5)
+        
+        # Crear reviews para destination2
+        Review.objects.create(user=self.user1, destination=self.destination2, rating=3)
+        
+        # destination3 sin reviews
+        
+        self.assertEqual(self.destination1.review_count, 3)
+        self.assertEqual(self.destination2.review_count, 1)
+        self.assertEqual(self.destination3.review_count, 0)
+    
+    def test_destination_average_rating(self):
+        """Test: calcular la puntuación media de un destino"""
+        from .models import Review
+        
+        # Crear reviews para destination1 (promedio: 4.0)
+        Review.objects.create(user=self.user1, destination=self.destination1, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination1, rating=4)
+        Review.objects.create(user=self.user3, destination=self.destination1, rating=3)
+        
+        # Crear reviews para destination2 (promedio: 5.0)
+        Review.objects.create(user=self.user1, destination=self.destination2, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination2, rating=5)
+        
+        # destination3 sin reviews
+        
+        self.assertEqual(self.destination1.average_rating, 4.0)
+        self.assertEqual(self.destination2.average_rating, 5.0)
+        self.assertEqual(self.destination3.average_rating, 0)
+    
+    def test_destination_popularity_score(self):
+        """Test: calcular el score de popularidad combinando cantidad y calidad"""
+        from .models import Review
+        
+        # destination1: 3 reviews con promedio 4.0
+        Review.objects.create(user=self.user1, destination=self.destination1, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination1, rating=4)
+        Review.objects.create(user=self.user3, destination=self.destination1, rating=3)
+        
+        # destination2: 2 reviews con promedio 5.0
+        Review.objects.create(user=self.user1, destination=self.destination2, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination2, rating=5)
+        
+        # El score debe considerar tanto cantidad como calidad
+        self.assertGreater(self.destination1.popularity_score, 0)
+        self.assertGreater(self.destination2.popularity_score, 0)
+
+
+class DestinationViewOrderingTest(TestCase):
+    """Tests para la ordenación de destinos en la vista (TDD - Red Phase)"""
+    
+    def setUp(self):
+        self.client = Client()
+        
+        self.destination1 = Destination.objects.create(
+            name='Paris',
+            description='City of lights',
+            slug='paris'
+        )
+        self.destination2 = Destination.objects.create(
+            name='Tokyo',
+            description='Modern metropolis',
+            slug='tokyo'
+        )
+        self.destination3 = Destination.objects.create(
+            name='New York',
+            description='The big apple',
+            slug='new-york'
+        )
+        
+        self.user1 = User.objects.create_user(username='user1', password='pass123')
+        self.user2 = User.objects.create_user(username='user2', password='pass123')
+        self.user3 = User.objects.create_user(username='user3', password='pass123')
+    
+    def test_destinations_ordered_by_popularity(self):
+        """Test: los destinos se ordenan por popularidad en la vista principal"""
+        from .models import Review
+        
+        # Tokyo: 3 reviews, promedio 5.0 (más popular)
+        Review.objects.create(user=self.user1, destination=self.destination2, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination2, rating=5)
+        Review.objects.create(user=self.user3, destination=self.destination2, rating=5)
+        
+        # Paris: 2 reviews, promedio 4.0
+        Review.objects.create(user=self.user1, destination=self.destination1, rating=4)
+        Review.objects.create(user=self.user2, destination=self.destination1, rating=4)
+        
+        # New York: 1 review, promedio 3.0 (menos popular)
+        Review.objects.create(user=self.user3, destination=self.destination3, rating=3)
+        
+        response = self.client.get(reverse('destinations'))
+        destinations = response.context['destinations']
+        
+        # Verificar orden: Tokyo, Paris, New York
+        self.assertEqual(destinations[0], self.destination2)
+        self.assertEqual(destinations[1], self.destination1)
+        self.assertEqual(destinations[2], self.destination3)
+    
+    def test_destinations_with_no_reviews_appear_last(self):
+        """Test: destinos sin reviews aparecen al final"""
+        from .models import Review
+        
+        # Solo Tokyo tiene reviews
+        Review.objects.create(user=self.user1, destination=self.destination2, rating=5)
+        
+        response = self.client.get(reverse('destinations'))
+        destinations = list(response.context['destinations'])
+        
+        # Tokyo debe estar primero
+        self.assertEqual(destinations[0], self.destination2)
+        
+        # Paris y New York al final (sin orden específico entre ellos)
+        self.assertIn(self.destination1, destinations[1:])
+        self.assertIn(self.destination3, destinations[1:])
+    
+    def test_destinations_ordering_updates_with_new_reviews(self):
+        """Test: el orden se actualiza al añadir nuevas reviews"""
+        from .models import Review
+        
+        # Inicialmente Paris es más popular
+        Review.objects.create(user=self.user1, destination=self.destination1, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination1, rating=5)
+        
+        response = self.client.get(reverse('destinations'))
+        destinations = response.context['destinations']
+        self.assertEqual(destinations[0], self.destination1)
+        
+        # Añadir más reviews a Tokyo
+        Review.objects.create(user=self.user1, destination=self.destination2, rating=5)
+        Review.objects.create(user=self.user2, destination=self.destination2, rating=5)
+        Review.objects.create(user=self.user3, destination=self.destination2, rating=5)
+        
+        response = self.client.get(reverse('destinations'))
+        destinations = response.context['destinations']
+        
+        # Ahora Tokyo debe estar primero
+        self.assertEqual(destinations[0], self.destination2)
