@@ -50,7 +50,6 @@ class DestinationDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.comments.all()
         context['reviews'] = self.object.reviews.all()
-        context['review_form'] = ReviewForm()
         
         # Verificar si el usuario puede hacer review
         if self.request.user.is_authenticated:
@@ -101,7 +100,6 @@ class CruiseDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['comments'] = self.object.comments.all()
         context['reviews'] = self.object.reviews.all()
-        context['review_form'] = ReviewForm()
         
         # Verificar si el usuario puede hacer review
         if self.request.user.is_authenticated:
@@ -130,12 +128,25 @@ class InfoRequestCreateView(SuccessMessageMixin, generic.CreateView):
     fields = ['name', 'email', 'notes', 'cruise']
     template_name = 'info_request_create.html'
     success_url = reverse_lazy('index')
-    success_message = "¡Tu solicitud ha sido enviada correctamente!"
+    success_message = "¡Tu compra ha sido confirmada! Ahora puedes valorar el crucero y sus destinos."
+    
+    def get_initial(self):
+        """Pre-rellenar datos del usuario si está autenticado."""
+        initial = super().get_initial()
+        if self.request.user.is_authenticated:
+            initial['name'] = self.request.user.get_full_name() or self.request.user.username
+            initial['email'] = self.request.user.email
+        return initial
     
     def form_valid(self, form):
         """Asociar el usuario actual a la solicitud si está autenticado."""
         if self.request.user.is_authenticated:
             form.instance.user = self.request.user
+            form.instance.approved = True
+            messages.success(
+                self.request,
+                '🎉 ¡Compra confirmada! Ahora puedes dejar valoraciones sobre el crucero y sus destinos.'
+            )
         return super().form_valid(form)
 
 @login_required
@@ -181,29 +192,32 @@ def add_destination_review(request, pk):
     destination = get_object_or_404(models.Destination, pk=pk)
     
     if request.method == 'POST':
-        form = ReviewForm(
-            request.POST,
-            user=request.user,
-            destination=destination
-        )
+        rating = request.POST.get('rating', '').strip()
+        comment = request.POST.get('comment', '').strip()
         
-        if form.is_valid():
+        if rating:
             try:
-                form.save()
-                messages.success(
-                    request,
-                    f'¡Gracias por tu valoración de {destination.name}! Tu opinión ha sido publicada.'
-                )
-                return redirect('destination_detail', pk=pk)
+                rating_int = int(rating)
+                if 1 <= rating_int <= 5:
+                    models.Review.objects.create(
+                        user=request.user,
+                        destination=destination,
+                        rating=rating_int,
+                        comment=comment
+                    )
+                    messages.success(
+                        request,
+                        f'¡Gracias por tu valoración de {destination.name}! Tu opinión ha sido publicada.'
+                    )
+                else:
+                    messages.error(request, 'La puntuación debe estar entre 1 y 5 estrellas.')
+            except ValueError:
+                messages.error(request, 'Puntuación inválida.')
             except ValidationError as e:
-                # Errores de validación del modelo (ej: no ha comprado)
                 for error in e.messages:
                     messages.error(request, error)
         else:
-            # Errores de validación del formulario
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, error)
+            messages.error(request, 'Debes seleccionar una puntuación.')
     
     return redirect('destination_detail', pk=pk)
 
@@ -218,28 +232,31 @@ def add_cruise_review(request, pk):
     cruise = get_object_or_404(models.Cruise, pk=pk)
     
     if request.method == 'POST':
-        form = ReviewForm(
-            request.POST,
-            user=request.user,
-            cruise=cruise
-        )
+        rating = request.POST.get('rating', '').strip()
+        comment = request.POST.get('comment', '').strip()
         
-        if form.is_valid():
+        if rating:
             try:
-                form.save()
-                messages.success(
-                    request,
-                    f'¡Gracias por tu valoración de {cruise.name}! Tu opinión ha sido publicada.'
-                )
-                return redirect('cruise_detail', pk=pk)
+                rating_int = int(rating)
+                if 1 <= rating_int <= 5:
+                    models.Review.objects.create(
+                        user=request.user,
+                        cruise=cruise,
+                        rating=rating_int,
+                        comment=comment
+                    )
+                    messages.success(
+                        request,
+                        f'¡Gracias por tu valoración de {cruise.name}! Tu opinión ha sido publicada.'
+                    )
+                else:
+                    messages.error(request, 'La puntuación debe estar entre 1 y 5 estrellas.')
+            except ValueError:
+                messages.error(request, 'Puntuación inválida.')
             except ValidationError as e:
-                # Errores de validación del modelo (ej: no ha comprado)
                 for error in e.messages:
                     messages.error(request, error)
         else:
-            # Errores de validación del formulario
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, error)
+            messages.error(request, 'Debes seleccionar una puntuación.')
     
     return redirect('cruise_detail', pk=pk)

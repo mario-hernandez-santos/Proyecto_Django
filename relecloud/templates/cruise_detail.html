@@ -191,14 +191,21 @@ ReleCloud - {{ cruise.name }}
                 <form method="post" action="{% url 'cruise_review' cruise.pk %}">
                     {% csrf_token %}
                     <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: var(--plasma-cyan);">{{ review_form.rating.label }}</label>
-                        {{ review_form.rating }}
-                        <small style="display: block; margin-top: 0.25rem; opacity: 0.7;">{{ review_form.rating.help_text }}</small>
+                        <label for="id_rating" style="display: block; margin-bottom: 0.5rem; color: var(--plasma-cyan);">Puntuación *</label>
+                        <select name="rating" id="id_rating" required style="width: 100%; padding: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 5px;">
+                            <option value="">Selecciona una puntuación</option>
+                            <option value="1">⭐ 1 estrella</option>
+                            <option value="2">⭐⭐ 2 estrellas</option>
+                            <option value="3">⭐⭐⭐ 3 estrellas</option>
+                            <option value="4">⭐⭐⭐⭐ 4 estrellas</option>
+                            <option value="5">⭐⭐⭐⭐⭐ 5 estrellas</option>
+                        </select>
+                        <small style="display: block; margin-top: 0.25rem; opacity: 0.7;">Califica tu experiencia de 1 a 5 estrellas</small>
                     </div>
                     <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; color: var(--plasma-cyan);">{{ review_form.comment.label }}</label>
-                        {{ review_form.comment }}
-                        <small style="display: block; margin-top: 0.25rem; opacity: 0.7;">{{ review_form.comment.help_text }}</small>
+                        <label for="id_comment" style="display: block; margin-bottom: 0.5rem; color: var(--plasma-cyan);">Comentario *</label>
+                        <textarea name="comment" id="id_comment" rows="4" required style="width: 100%; padding: 0.5rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; border-radius: 5px; resize: vertical;"></textarea>
+                        <small style="display: block; margin-top: 0.25rem; opacity: 0.7;">Comparte tu opinión sobre este crucero</small>
                     </div>
                     <button type="submit" class="btn" style="margin-top: 1rem; background: gold; color: black; position: relative; z-index: 10;">
                         ⭐ Publicar Valoración

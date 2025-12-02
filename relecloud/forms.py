@@ -82,17 +82,26 @@ class ReviewForm(forms.ModelForm):
         
         # La validación de compra se hace en Review.clean() del modelo
         # Aquí solo validamos la duplicación de reviews
-        
         return cleaned_data
     
     def save(self, commit=True):
         """Guardar review asignando usuario, destino y/o crucero."""
+        # Crear instancia sin llamar a full_clean() todavía
         review = super().save(commit=False)
+        
+        # Asignar los campos requeridos
         review.user = self.user
-        review.destination = self.destination
-        review.cruise = self.cruise
+        
+        if self.destination:
+            review.destination = self.destination
+            review.cruise = None
+        elif self.cruise:
+            review.cruise = self.cruise
+            review.destination = None
         
         if commit:
-            review.save()  # Esto llamará a Review.clean() para validar la compra
+            # Ahora sí validar y guardar con todos los campos asignados
+            review.full_clean()
+            review.save()
         
         return review

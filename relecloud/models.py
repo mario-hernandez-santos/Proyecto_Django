@@ -127,7 +127,7 @@ class InfoRequest(models.Model):
         verbose_name='Crucero'
     )
     approved = models.BooleanField(
-        default=False,
+        default=True,
         verbose_name='Aprobado',
         help_text='Indica si la compra fue confirmada'
     )
